@@ -1,17 +1,14 @@
-import { defineConfig } from "astro/config";
-import { unified } from "@astrojs/markdown-remark";
-import tailwindcss from "@tailwindcss/vite";
 import preact from "@astrojs/preact";
+import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "astro/config";
 import { remarkMermaid } from "./src/utils/remark-mermaid";
 
-// https://astro.build/config
 export default defineConfig({
   site: "https://phanthanhnam.com",
   integrations: [preact()],
-  markdown: unified({
+  markdown: {
     remarkPlugins: [remarkMermaid],
-    rehypePlugins: [],
-  }),
+  },
   vite: {
     plugins: [tailwindcss()],
   },
