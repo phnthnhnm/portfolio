@@ -145,6 +145,13 @@ export default function Terminal() {
     }
   };
 
+  // Auto-focus input when terminal opens
+  useEffect(() => {
+    if (isOpen) {
+      inputRef.current?.focus();
+    }
+  }, [isOpen]);
+
   const focusInput = () => {
     inputRef.current?.focus();
   };
