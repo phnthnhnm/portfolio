@@ -26,5 +26,34 @@ const { title, description } = Astro.props;
       <slot />
     </main>
     <Footer />
+
+    <button
+      id="scroll-top-btn"
+      class="pointer-events-none fixed left-1/2 top-0 z-50 -translate-x-1/2 -translate-y-full rounded-b-md border border-t-0 border-slate-800 bg-slate-900/90 px-4 py-2 text-sm text-slate-400 opacity-0 shadow-md backdrop-blur transition-all duration-300 hover:text-slate-200 hover:border-slate-700 md:px-3 md:py-1 md:text-[11px] md:leading-none"
+      aria-label="Scroll to top"
+    >
+      <svg class="mr-1 inline-block h-3 w-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+      </svg>
+      Back to top
+    </button>
+
+    <script>
+      const scrollBtn = document.getElementById("scroll-top-btn");
+      if (scrollBtn) {
+        window.addEventListener("scroll", () => {
+          const show = window.scrollY > 500;
+          scrollBtn.classList.toggle("-translate-y-full", !show);
+          scrollBtn.classList.toggle("translate-y-0", show);
+          scrollBtn.classList.toggle("opacity-0", !show);
+          scrollBtn.classList.toggle("opacity-100", show);
+          scrollBtn.classList.toggle("pointer-events-none", !show);
+          scrollBtn.classList.toggle("pointer-events-auto", show);
+        });
+        scrollBtn.addEventListener("click", () => {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      }
+    </script>
   </body>
 </html>

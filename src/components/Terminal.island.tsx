@@ -180,7 +180,7 @@ export default function Terminal() {
           </div>
 
           {/* Output area */}
-          <div ref={outputRef} onClick={focusInput} class="h-[350px] overflow-y-auto p-4 font-mono text-sm leading-relaxed cursor-text">
+          <div ref={outputRef} onClick={focusInput} class="h-87.5 overflow-y-auto p-4 font-mono text-sm leading-relaxed cursor-text">
             {/* Banner */}
             <div class="mb-2 whitespace-pre text-indigo-400 text-xs leading-tight select-none">{banner}</div>
 
