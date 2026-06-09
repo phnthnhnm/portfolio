@@ -23,8 +23,9 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 
 <BaseLayout title={`${project.data.title} — Phan Thành Nam`} description={project.data.description}>
   <article class="section-container pt-24">
-    <!-- Back link -->
+    <!-- Back link — defaults to /#projects, switches to /projects/ if referrer is the projects list page -->
     <a
+      id="back-link"
       href="/#projects"
       class="mb-8 inline-flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-indigo-400"
     >
@@ -135,6 +136,19 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
     </div>
   </article>
 </BaseLayout>
+
+<script is:inline>
+  // If the user came from the projects list page, point the back link there instead of /#projects
+  const backLink = document.getElementById("back-link");
+  if (backLink && document.referrer) {
+    try {
+      const refUrl = new URL(document.referrer);
+      if (refUrl.pathname === "/projects/" || refUrl.pathname === "/projects") {
+        backLink.href = "/projects/";
+      }
+    } catch {}
+  }
+</script>
 
 <script is:inline>
   // Highlight active TOC link on scroll
