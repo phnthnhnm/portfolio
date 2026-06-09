@@ -6,9 +6,9 @@ techStack:
   - "Tailwind CSS"
   - "TypeScript"
   - "Preact"
-  - "GitHub Pages"
+  - "Cloudflare Pages"
 githubUrl: "https://github.com/phnthnhnm/portfolio"
-liveUrl: "https://phnthnhnm.github.io/portfolio"
+liveUrl: "https://phanthanhnam.com"
 featured: true
 order: 2
 ---

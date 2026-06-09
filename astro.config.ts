@@ -4,8 +4,7 @@ import preact from "@astrojs/preact";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://phnthnhnm.github.io",
-  base: "/portfolio",
+  site: "https://phanthanhnam.com",
   integrations: [preact()],
   vite: {
     plugins: [tailwindcss()],
