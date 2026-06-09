@@ -1,5 +1,4 @@
 (async () => {
-  // Skip if no mermaid blocks on page
   if (!document.querySelector(".mermaid")) return;
 
   const { default: mermaid } = await import(
@@ -30,11 +29,12 @@
 
   await mermaid.run({ querySelector: ".mermaid" });
 
-  // --- Wrap diagrams with zoom/pan controls ---
+  // --- Wrap each diagram with zoom/pan controls ---
   document.querySelectorAll(".mermaid").forEach((el) => {
     const svg = el.querySelector("svg");
     if (!svg) return;
 
+    // Create wrapper
     const wrapper = document.createElement("div");
     wrapper.className = "mermaid-wrapper";
     el.parentNode.insertBefore(wrapper, el);
@@ -45,10 +45,10 @@
     expandBtn.innerHTML =
       '<svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 8.25M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15.75M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 8.25M20.25 20.25h-4.5m4.5 0v-4.5m0 4.5L15 15.75"/></svg>';
     expandBtn.className = "mermaid-expand-btn";
-    expandBtn.title = "Scroll to zoom · Drag to pan · Double-click for fullscreen";
+    expandBtn.title = "Open fullscreen";
     wrapper.appendChild(expandBtn);
 
-    // Fullscreen overlay
+    // --- Build fullscreen overlay (one per diagram) ---
     const overlay = document.createElement("div");
     overlay.className = "mermaid-overlay";
     overlay.innerHTML = `
@@ -67,63 +67,63 @@
 
     const stage = overlay.querySelector(".mermaid-overlay-stage");
     const zoomLabel = overlay.querySelector(".mermaid-zoom-level");
+
+    // --- Wrapper state ---
     let scale = 1,
       panX = 0,
       panY = 0;
-    let dragging = false,
-      lastX = 0,
-      lastY = 0;
+    let didDrag = false; // track if mouse moved between mousedown & mouseup
 
-    function updateTransform(el, s, x, y) {
-      el.style.transform = `translate(${x}px, ${y}px) scale(${s})`;
-      el.style.transformOrigin = "0 0";
+    function updateTransform(target, s, x, y) {
+      target.style.transform = `translate(${x}px, ${y}px) scale(${s})`;
+      target.style.transformOrigin = "0 0";
     }
 
-    function setZoom(s) {
-      scale = s;
+    // Zoom toward a specific point (clientX, clientY) by a scale delta
+    function zoomAt(clientX, clientY, ds) {
+      const rect = wrapper.getBoundingClientRect();
+      const cx = clientX - rect.left;
+      const cy = clientY - rect.top;
+      const ns = Math.max(0.5, Math.min(4, scale + ds));
+      panX = cx - (cx - panX) * (ns / scale);
+      panY = cy - (cy - panY) * (ns / scale);
+      scale = ns;
       updateTransform(el, scale, panX, panY);
-      if (zoomLabel) zoomLabel.textContent = Math.round(scale * 100) + "%";
+      zoomLabel.textContent = Math.round(scale * 100) + "%";
     }
 
-    // Click → zoom in
-    wrapper.addEventListener("click", (e) => {
-      if (e.target === expandBtn || expandBtn.contains(e.target)) return;
-      setZoom(Math.min(4, scale + 0.25));
-    });
-
-    // Wheel zoom
+    // --- Scroll zoom (wrapper) ---
     wrapper.addEventListener("wheel", (e) => {
       e.preventDefault();
-      const rect = wrapper.getBoundingClientRect();
-      const cx = e.clientX - rect.left,
-        cy = e.clientY - rect.top;
-      const newScale = Math.max(0.5, Math.min(4, scale + (e.deltaY > 0 ? -0.15 : 0.15)));
-      panX = cx - (cx - panX) * (newScale / scale);
-      panY = cy - (cy - panY) * (newScale / scale);
-      setZoom(newScale);
+      zoomAt(e.clientX, e.clientY, e.deltaY > 0 ? -0.15 : 0.15);
     });
 
-    // Drag
+    // --- Drag (wrapper) ---
     wrapper.addEventListener("mousedown", (e) => {
-      if (scale <= 1) return;
-      dragging = true;
-      lastX = e.clientX - panX;
-      lastY = e.clientY - panY;
+      if (e.target === expandBtn || expandBtn.contains(e.target)) return;
       wrapper.classList.add("dragging");
-    });
-    window.addEventListener("mousemove", (e) => {
-      if (!dragging) return;
-      panX = e.clientX - lastX;
-      panY = e.clientY - lastY;
-      updateTransform(el, scale, panX, panY);
-    });
-    window.addEventListener("mouseup", () => {
-      dragging = false;
-      wrapper.classList.remove("dragging");
+      const startX = e.clientX - panX;
+      const startY = e.clientY - panY;
+
+      function onMove(ev) {
+        didDrag = true;
+        panX = ev.clientX - startX;
+        panY = ev.clientY - startY;
+        updateTransform(el, scale, panX, panY);
+      }
+      function onUp() {
+        wrapper.classList.remove("dragging");
+        window.removeEventListener("mousemove", onMove);
+        window.removeEventListener("mouseup", onUp);
+      }
+      window.addEventListener("mousemove", onMove);
+      window.addEventListener("mouseup", onUp);
     });
 
-    // Double-click → fullscreen overlay
-    wrapper.addEventListener("dblclick", () => {
+    // Clicks are for drag only; zoom via scroll wheel
+
+    // --- Fullscreen ---
+    function openFullscreen() {
       const clone = svg.cloneNode(true);
       clone.style.maxWidth = "95vw";
       clone.style.maxHeight = "82vh";
@@ -136,56 +136,86 @@
       let ovScale = 1,
         ovPanX = 0,
         ovPanY = 0;
-      let ovDragging = false,
-        ovLastX = 0,
-        ovLastY = 0;
+      let ovDidDrag = false;
 
       function ovUpdate() {
         updateTransform(stage, ovScale, ovPanX, ovPanY);
-        if (zoomLabel) zoomLabel.textContent = Math.round(ovScale * 100) + "%";
+        zoomLabel.textContent = Math.round(ovScale * 100) + "%";
       }
 
-      stage.addEventListener("wheel", (ev) => {
+      // Overlay wheel — use onwheel to prevent listener accumulation
+      stage.onwheel = (ev) => {
         ev.preventDefault();
         ovScale = Math.max(0.3, Math.min(5, ovScale + (ev.deltaY > 0 ? -0.2 : 0.2)));
         ovUpdate();
-      });
-      stage.addEventListener("mousedown", (ev) => {
-        ovDragging = true;
-        ovLastX = ev.clientX - ovPanX;
-        ovLastY = ev.clientY - ovPanY;
-        stage.classList.add("dragging");
-      });
-      window.addEventListener("mousemove", (ev) => {
-        if (!ovDragging || !overlay.classList.contains("active")) return;
-        ovPanX = ev.clientX - ovLastX;
-        ovPanY = ev.clientY - ovLastY;
-        ovUpdate();
-      });
-      const onMouseUp = () => {
-        ovDragging = false;
-        stage.classList.remove("dragging");
       };
-      window.addEventListener("mouseup", onMouseUp, { once: true });
 
-      overlay.querySelector(".mermaid-zoom-in").onclick = () => {
+      // Overlay drag
+      stage.onmousedown = (ev) => {
+        ovDidDrag = false;
+        const startX = ev.clientX - ovPanX,
+          startY = ev.clientY - ovPanY;
+        stage.classList.add("dragging");
+
+        function onMove(e) {
+          ovDidDrag = true;
+          ovPanX = e.clientX - startX;
+          ovPanY = e.clientY - startY;
+          ovUpdate();
+        }
+        function onUp() {
+          stage.classList.remove("dragging");
+          window.removeEventListener("mousemove", onMove);
+          window.removeEventListener("mouseup", onUp);
+        }
+        window.addEventListener("mousemove", onMove);
+        window.addEventListener("mouseup", onUp);
+      };
+
+      // Overlay click (only if not a drag) — do nothing on click in overlay
+      stage.onclick = () => {
+        // intentionally: no single-click zoom in overlay; only scroll or drag
+      };
+
+      // Overlay zoom buttons
+      overlay.querySelector(".mermaid-zoom-in").onclick = (ev) => {
+        ev.stopPropagation();
         ovScale = Math.min(5, ovScale + 0.3);
         ovUpdate();
       };
-      overlay.querySelector(".mermaid-zoom-out").onclick = () => {
+      overlay.querySelector(".mermaid-zoom-out").onclick = (ev) => {
+        ev.stopPropagation();
         ovScale = Math.max(0.3, ovScale - 0.3);
         ovUpdate();
       };
-      overlay.querySelector(".mermaid-zoom-reset").onclick = () => {
+      overlay.querySelector(".mermaid-zoom-reset").onclick = (ev) => {
+        ev.stopPropagation();
         ovScale = 1;
         ovPanX = 0;
         ovPanY = 0;
         ovUpdate();
       };
+    }
+
+    // Expand button → single click opens fullscreen
+    expandBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openFullscreen();
+    });
+
+    // Double-click on wrapper → fullscreen
+    wrapper.addEventListener("dblclick", () => {
+      openFullscreen();
     });
 
     // Close overlay
-    const closeOverlay = () => overlay.classList.remove("active");
+    function closeOverlay() {
+      overlay.classList.remove("active");
+      // Clean up overlay handlers
+      stage.onwheel = null;
+      stage.onmousedown = null;
+      stage.onclick = null;
+    }
     overlay.querySelector(".mermaid-overlay-close").onclick = closeOverlay;
     overlay.querySelector(".mermaid-overlay-bg").onclick = closeOverlay;
     document.addEventListener("keydown", (e) => {
