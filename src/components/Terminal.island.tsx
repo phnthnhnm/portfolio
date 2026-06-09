@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "preact/hooks";
+import { useCallback, useEffect, useRef, useState } from "preact/hooks";
 
 interface CommandOutput {
   type: "output" | "input" | "error";
@@ -20,7 +20,7 @@ Backend Engineer
 Location: Vietnam
 Focus: Scalable APIs, Distributed Systems, Cloud Infrastructure`,
 
-  "ls": (args) => {
+  ls: (args) => {
     if (args[0] === "projects/" || args[0] === "projects") {
       return `projects/
 ├── iras-rag/         — RAG system for advisory services
@@ -33,7 +33,7 @@ Focus: Scalable APIs, Distributed Systems, Cloud Infrastructure`,
   skills.json — Tech stack`;
   },
 
-  "cat": (args) => {
+  cat: (args) => {
     if (args[0] === "skills.json" || args[0] === "skills") {
       return `{
   "languages":   ["C#", "Go", "Python", "TypeScript", "SQL"],
@@ -46,9 +46,9 @@ Focus: Scalable APIs, Distributed Systems, Cloud Infrastructure`,
     return `cat: ${args[0] || "(no file)"}: No such file or directory`;
   },
 
-  contact: () => `Email:    phnthnhnm@gmail.com
+  contact: () => `Email:    namthanh.phan@proton.me
 GitHub:   github.com/phnthnhnm
-LinkedIn: linkedin.com/in/phnthnhnm
+LinkedIn: linkedin.com/in/phan-thanh-nam
 
 Type 'help' for more commands.`,
 
@@ -81,38 +81,35 @@ export default function Terminal() {
     }
   }, [history]);
 
-  const executeCommand = useCallback(
-    (cmdStr: string) => {
-      const trimmed = cmdStr.trim();
-      if (!trimmed) return;
+  const executeCommand = useCallback((cmdStr: string) => {
+    const trimmed = cmdStr.trim();
+    if (!trimmed) return;
 
-      const [cmd, ...args] = trimmed.split(/\s+/);
-      const handler = commands[cmd];
+    const [cmd, ...args] = trimmed.split(/\s+/);
+    const handler = commands[cmd];
 
-      setHistory((prev) => [...prev, { type: "input", text: `$ ${trimmed}` }]);
+    setHistory((prev) => [...prev, { type: "input", text: `$ ${trimmed}` }]);
 
-      if (handler) {
-        const result = handler(args);
-        if (result === "__CLEAR__") {
-          setHistory([]);
-        } else {
-          setHistory((prev) => [...prev, { type: "output", text: result }]);
-        }
+    if (handler) {
+      const result = handler(args);
+      if (result === "__CLEAR__") {
+        setHistory([]);
       } else {
-        setHistory((prev) => [
-          ...prev,
-          {
-            type: "error",
-            text: `bash: ${cmd}: command not found. Type 'help' for available commands.`,
-          },
-        ]);
+        setHistory((prev) => [...prev, { type: "output", text: result }]);
       }
+    } else {
+      setHistory((prev) => [
+        ...prev,
+        {
+          type: "error",
+          text: `bash: ${cmd}: command not found. Type 'help' for available commands.`,
+        },
+      ]);
+    }
 
-      setCmdHistory((prev) => [...prev, trimmed]);
-      setHistoryIdx(-1);
-    },
-    [],
-  );
+    setCmdHistory((prev) => [...prev, trimmed]);
+    setHistoryIdx(-1);
+  }, []);
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -161,7 +158,11 @@ export default function Terminal() {
         aria-label={isOpen ? "Close terminal" : "Open terminal"}
       >
         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z"
+          />
         </svg>
       </button>
 
@@ -171,11 +172,7 @@ export default function Terminal() {
           {/* Title bar */}
           <div class="flex items-center gap-2 border-b border-slate-800 bg-slate-900 px-4 py-2.5">
             <div class="flex gap-1.5">
-              <button
-                onClick={() => setIsOpen(false)}
-                class="h-3 w-3 rounded-full bg-red-500 transition-colors hover:bg-red-400"
-                aria-label="Close terminal"
-              />
+              <button onClick={() => setIsOpen(false)} class="h-3 w-3 rounded-full bg-red-500 transition-colors hover:bg-red-400" aria-label="Close terminal" />
               <div class="h-3 w-3 rounded-full bg-yellow-500" />
               <div class="h-3 w-3 rounded-full bg-emerald-500" />
             </div>
@@ -183,28 +180,16 @@ export default function Terminal() {
           </div>
 
           {/* Output area */}
-          <div
-            ref={outputRef}
-            onClick={focusInput}
-            class="h-[350px] overflow-y-auto p-4 font-mono text-sm leading-relaxed cursor-text"
-          >
+          <div ref={outputRef} onClick={focusInput} class="h-[350px] overflow-y-auto p-4 font-mono text-sm leading-relaxed cursor-text">
             {/* Banner */}
-            <div class="mb-2 whitespace-pre text-indigo-400 text-xs leading-tight select-none">
-              {banner}
-            </div>
+            <div class="mb-2 whitespace-pre text-indigo-400 text-xs leading-tight select-none">{banner}</div>
 
             {/* History */}
             {history.map((line, i) => (
               <div key={i} class="mb-1">
-                {line.type === "input" && (
-                  <span class="text-emerald-400">{line.text}</span>
-                )}
-                {line.type === "output" && (
-                  <pre class="whitespace-pre-wrap text-slate-300 my-1">{line.text}</pre>
-                )}
-                {line.type === "error" && (
-                  <span class="text-red-400">{line.text}</span>
-                )}
+                {line.type === "input" && <span class="text-emerald-400">{line.text}</span>}
+                {line.type === "output" && <pre class="whitespace-pre-wrap text-slate-300 my-1">{line.text}</pre>}
+                {line.type === "error" && <span class="text-red-400">{line.text}</span>}
               </div>
             ))}
 
