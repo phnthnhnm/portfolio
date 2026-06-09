@@ -3,6 +3,10 @@ import { getCollection } from "astro:content";
 
 const projects = (await getCollection("projects"))
   .sort((a, b) => a.data.order - b.data.order);
+
+function slug(id: string) {
+  return id.replace(/\.md$/, "");
+}
 ---
 
 <section id="projects" class="section-container">
@@ -14,7 +18,12 @@ const projects = (await getCollection("projects"))
     {projects.map((project) => (
       <div class="card group flex flex-col">
         <div class="mb-4 flex items-start justify-between">
-          <h3 class="text-xl font-semibold">{project.data.title}</h3>
+          <a
+            href={`/projects/${slug(project.id)}/`}
+            class="text-xl font-semibold transition-colors hover:text-indigo-400"
+          >
+            {project.data.title}
+          </a>
           <div class="flex gap-2">
             {project.data.githubUrl && (
               <a
@@ -50,11 +59,22 @@ const projects = (await getCollection("projects"))
         </p>
 
         <!-- Tech stack tags -->
-        <div class="flex flex-wrap gap-2">
+        <div class="mb-4 flex flex-wrap gap-2">
           {project.data.techStack.map((tech) => (
             <span class="badge">{tech}</span>
           ))}
         </div>
+
+        <!-- View details link -->
+        <a
+          href={`/projects/${slug(project.id)}/`}
+          class="inline-flex items-center gap-1 text-sm font-medium text-indigo-400 transition-colors hover:text-indigo-300"
+        >
+          View Details
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+          </svg>
+        </a>
       </div>
     ))}
   </div>
