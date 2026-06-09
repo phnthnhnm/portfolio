@@ -79,18 +79,20 @@ const navLinks = [
   const closeIcon = document.getElementById("menu-close");
 
   btn?.addEventListener("click", () => {
-    const isOpen = !menu?.classList.contains("hidden");
-    menu?.classList.toggle("hidden", isOpen);
-    openIcon?.classList.toggle("hidden", !isOpen);
-    closeIcon?.classList.toggle("hidden", isOpen);
+    if (!menu || !openIcon || !closeIcon) return;
+    const isOpen = !menu.classList.contains("hidden");
+    menu.classList.toggle("hidden", isOpen);
+    openIcon.classList.toggle("hidden", !isOpen);
+    closeIcon.classList.toggle("hidden", isOpen);
   });
 
   // Close mobile menu on link click
   menu?.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", () => {
+      if (!menu || !openIcon || !closeIcon) return;
       menu.classList.add("hidden");
-      openIcon?.classList.remove("hidden");
-      closeIcon?.classList.add("hidden");
+      openIcon.classList.remove("hidden");
+      closeIcon.classList.add("hidden");
     });
   });
 </script>

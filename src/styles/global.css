@@ -80,7 +80,7 @@
 
 @layer utilities {
   .text-gradient {
-    @apply bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent;
+    @apply bg-linear-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent;
   }
 }
 
@@ -127,7 +127,10 @@
   color: #94a3b8;
   cursor: pointer;
   opacity: 0;
-  transition: opacity 0.15s, color 0.15s, background 0.15s;
+  transition:
+    opacity 0.15s,
+    color 0.15s,
+    background 0.15s;
 }
 .code-block-wrapper:hover .copy-code-btn,
 .copy-code-btn.copied {
@@ -142,4 +145,3 @@
   border-color: #34d39933;
   background: #34d39915;
 }
-
