@@ -1,8 +1,4 @@
-interface ContactBody {
-  name: string;
-  email: string;
-  message: string;
-}
+import { validateContact } from "../../src/lib/contact-validation";
 
 interface Env {
   RESEND_API_KEY: string;
@@ -15,9 +11,9 @@ const TO_EMAIL = "namthanh.phan@proton.me";
 
 export const onRequestPost = async ({ request, env }: { request: Request; env: Env }) => {
   // Parse and validate body
-  let body: ContactBody;
+  let parsed: unknown;
   try {
-    body = (await request.json()) as ContactBody;
+    parsed = await request.json();
   } catch {
     return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
       status: 400,
@@ -25,32 +21,15 @@ export const onRequestPost = async ({ request, env }: { request: Request; env: E
     });
   }
 
-  const { name, email, message } = body;
-
-  // Validate fields
-  const errors: string[] = [];
-  if (!name || typeof name !== "string" || name.trim().length === 0) {
-    errors.push("Name is required.");
-  }
-  if (!email || typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    errors.push("A valid email is required.");
-  }
-  if (!message || typeof message !== "string" || message.trim().length < 10) {
-    errors.push("Message must be at least 10 characters.");
-  }
-  if (name && name.length > 100) {
-    errors.push("Name must be under 100 characters.");
-  }
-  if (message && message.length > 5000) {
-    errors.push("Message must be under 5,000 characters.");
-  }
-
-  if (errors.length > 0) {
-    return new Response(JSON.stringify({ error: errors.join(" ") }), {
+  const validation = validateContact(parsed);
+  if (!validation.valid) {
+    return new Response(JSON.stringify({ error: validation.errors.join(" ") }), {
       status: 422,
       headers: { "Content-Type": "application/json" },
     });
   }
+
+  const { name, email, message } = validation.data;
 
   // Send email via Resend
   try {
