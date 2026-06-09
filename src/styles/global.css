@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+@theme {
+  --color-accent: #6366f1;
+  --color-accent-hover: #818cf8;
+  --color-bg-dark: #020617;
+  --color-bg-card: #0f172a;
+  --color-border: #1e293b;
+  --color-text: #f1f5f9;
+  --color-text-muted: #94a3b8;
+  --color-bg-light: #f8fafc;
+  --color-card-light: #ffffff;
+  --color-border-light: #e2e8f0;
+  --color-text-light: #0f172a;
+  --color-text-muted-light: #64748b;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    @apply bg-slate-950 text-slate-100 antialiased;
+  }
+
+  body.light {
+    @apply bg-slate-50 text-slate-900;
+  }
+
+  /* Selection color */
+  ::selection {
+    background-color: var(--color-accent);
+    color: white;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg-dark);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-muted);
+  }
+}
+
+@layer components {
+  .section-container {
+    @apply mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8;
+  }
+
+  .section-title {
+    @apply mb-12 text-3xl font-bold tracking-tight sm:text-4xl;
+  }
+
+  .card {
+    @apply rounded-xl border border-slate-800 bg-slate-900/50 p-6 transition-all duration-300 hover:border-slate-700 hover:shadow-lg;
+  }
+
+  body.light .card {
+    @apply border-slate-200 bg-white hover:border-slate-300 hover:shadow-md;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full bg-slate-800 px-3 py-1 text-xs font-medium text-slate-300;
+  }
+
+  body.light .badge {
+    @apply bg-slate-100 text-slate-600;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent;
+  }
+}

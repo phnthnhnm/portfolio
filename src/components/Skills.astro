@@ -1,0 +1,51 @@
+---
+interface SkillCategory {
+  category: string;
+  skills: string[];
+}
+
+const skillCategories: SkillCategory[] = [
+  {
+    category: "Languages",
+    skills: ["C#", "Go", "Python", "TypeScript", "SQL", "JavaScript"],
+  },
+  {
+    category: "Frameworks",
+    skills: [".NET Core / ASP.NET", "Entity Framework", "React", "Astro", "Express.js"],
+  },
+  {
+    category: "Databases",
+    skills: ["PostgreSQL", "SQL Server", "Redis", "MongoDB", "Elasticsearch"],
+  },
+  {
+    category: "DevOps & Cloud",
+    skills: ["Docker", "Kubernetes", "GitHub Actions", "AWS", "Azure", "NGINX"],
+  },
+  {
+    category: "Tools & Practices",
+    skills: ["Git", "RabbitMQ", "gRPC", "REST", "GraphQL", "DDD", "Clean Architecture", "Agile/Scrum"],
+  },
+];
+---
+
+<section id="skills" class="section-container">
+  <h2 class="section-title">
+    <span class="text-gradient">Skills</span>
+  </h2>
+
+  <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {skillCategories.map((cat) => (
+      <div class="card">
+        <h3 class="mb-4 flex items-center gap-2 text-lg font-semibold">
+          <span class="h-2 w-2 rounded-full bg-indigo-500"></span>
+          {cat.category}
+        </h3>
+        <div class="flex flex-wrap gap-2">
+          {cat.skills.map((skill) => (
+            <span class="badge">{skill}</span>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>

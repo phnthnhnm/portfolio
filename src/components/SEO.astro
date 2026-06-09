@@ -1,0 +1,51 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const {
+  title = "Phan Thanh Nam — Backend Engineer",
+  description = "Backend engineer specializing in building scalable APIs, distributed systems, and cloud infrastructure. View my projects, experience, and get in touch.",
+  image = "/og-image.png",
+} = Astro.props;
+
+const site = Astro.site || "https://phnthnhnm.github.io";
+const imageUrl = new URL(image, site).href;
+---
+
+<!-- Primary Meta -->
+<meta name="description" content={description} />
+<meta name="author" content="Phan Thanh Nam" />
+<meta name="robots" content="index, follow" />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:url" content={site} />
+<meta property="og:site_name" content="Phan Thanh Nam — Portfolio" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Phan Thanh Nam",
+  "url": site,
+  "jobTitle": "Backend Engineer",
+  "sameAs": [
+    "https://github.com/phnthnhnm",
+    "https://linkedin.com/in/phnthnhnm"
+  ]
+})} />
+
+<!-- Favicon -->
+<link rel="icon" href="/portfolio/favicon.ico" type="image/x-icon" />

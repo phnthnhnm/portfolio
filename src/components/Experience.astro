@@ -1,0 +1,82 @@
+---
+interface ExperienceEntry {
+  role: string;
+  company: string;
+  period: string;
+  highlights: string[];
+}
+
+const experiences: ExperienceEntry[] = [
+  {
+    role: "Backend Engineer",
+    company: "Your Company",
+    period: "2024 — Present",
+    highlights: [
+      "Designed and built RESTful APIs serving 100K+ daily requests",
+      "Optimized database queries reducing p95 latency by 40%",
+      "Implemented event-driven architecture using RabbitMQ for async processing",
+      "Led migration from monolith to microservices architecture",
+    ],
+  },
+  {
+    role: "Software Engineer",
+    company: "Previous Company",
+    period: "2022 — 2024",
+    highlights: [
+      "Developed backend services in .NET 6/8 with clean architecture patterns",
+      "Built CI/CD pipelines with GitHub Actions and Docker",
+      "Integrated third-party APIs and payment gateways",
+      "Mentored junior developers and conducted code reviews",
+    ],
+  },
+  {
+    role: "Junior Developer",
+    company: "First Company",
+    period: "2020 — 2022",
+    highlights: [
+      "Contributed to full-stack web applications with React and .NET",
+      "Wrote unit and integration tests achieving 85% code coverage",
+      "Participated in Agile/Scrum ceremonies and sprint planning",
+    ],
+  },
+];
+---
+
+<section id="experience" class="section-container">
+  <h2 class="section-title">
+    <span class="text-gradient">Experience</span>
+  </h2>
+
+  <div class="relative">
+    <!-- Timeline line -->
+    <div class="absolute left-4 top-2 bottom-2 w-px bg-slate-800 md:left-6"></div>
+
+    <div class="space-y-10">
+      {experiences.map((exp) => (
+        <div class="relative pl-12 md:pl-16">
+          <!-- Timeline dot -->
+          <div class="absolute left-2.5 top-2 h-3 w-3 rounded-full border-2 border-indigo-500 bg-slate-950 md:left-4.5"></div>
+
+          <div class="card">
+            <div class="mb-1 flex flex-wrap items-center gap-2 text-sm text-slate-400">
+              <span class="font-medium text-slate-300">{exp.role}</span>
+              <span class="text-slate-600">•</span>
+              <span class="text-indigo-400">{exp.company}</span>
+            </div>
+            <p class="mb-4 font-mono text-xs text-slate-500">{exp.period}</p>
+            <ul class="space-y-2">
+              {exp.highlights.map((item) => (
+                <li class="flex gap-2 text-sm leading-relaxed text-slate-400">
+                  <svg class="mt-1 h-3.5 w-3.5 flex-shrink-0 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75" />
+                  </svg>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

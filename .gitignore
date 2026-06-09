@@ -1,0 +1,12 @@
+node_modules/
+.pnpm-store/
+dist/
+.env
+.env.*
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+.astro/

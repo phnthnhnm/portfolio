@@ -1,0 +1,20 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Hero from "@components/Hero.astro";
+import About from "@components/About.astro";
+import Projects from "@components/Projects.astro";
+import Experience from "@components/Experience.astro";
+import Skills from "@components/Skills.astro";
+import Contact from "@components/Contact.astro";
+import Terminal from "@components/Terminal.island.tsx";
+---
+
+<BaseLayout>
+  <Hero />
+  <About />
+  <Projects />
+  <Experience />
+  <Skills />
+  <Contact />
+  <Terminal client:only="preact" />
+</BaseLayout>
