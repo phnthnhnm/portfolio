@@ -1,5 +1,3 @@
-// ── Virtual filesystem for the terminal ────────────────────────────────
-
 export interface FsNode {
   type: "file" | "dir";
   name: string;
@@ -16,7 +14,7 @@ export interface ProjectEntry {
 
 export class FileSystem {
   root: FsNode;
-  cwd: string[]; // path segments from root, e.g. ["projects"]
+  cwd: string[];
 
   constructor(projects: ProjectEntry[] = []) {
     this.root = { type: "dir", name: "/", children: new Map() };
@@ -42,7 +40,9 @@ export class FileSystem {
   }
 
   private _populate(projects: ProjectEntry[]) {
-    this.add("about.md", `# About Me
+    this.add(
+      "about.md",
+      `# About Me
 
 I'm a backend engineer based in Vietnam. I build scalable APIs,
 distributed systems, and cloud infrastructure.
@@ -53,7 +53,8 @@ Focus areas:
 - Message queues & event-driven systems (RabbitMQ, gRPC)
 - Containerized deployments (Docker, Kubernetes, NGINX)
 
-Type 'cd projects/' and 'ls' to browse my work.`);
+Type 'cd projects/' and 'ls' to browse my work.`,
+    );
 
     this.add(
       "skills.json",
@@ -70,17 +71,17 @@ Type 'cd projects/' and 'ls' to browse my work.`);
       ),
     );
 
-    this.add("contact.txt", `Email:    namthanh.phan@proton.me
+    this.add(
+      "contact.txt",
+      `Email:    namthanh.phan@proton.me
 GitHub:   github.com/phnthnhnm
-LinkedIn: linkedin.com/in/phan-thanh-nam`);
+LinkedIn: linkedin.com/in/phan-thanh-nam`,
+    );
 
     // Auto-generate project files from content collection
     for (const p of projects) {
       const techLine = p.techStack.join(", ");
-      this.add(
-        `projects/${p.id}.md`,
-        `# ${p.title}\n\n${p.description}\n\nTech: ${techLine}`,
-      );
+      this.add(`projects/${p.id}.md`, `# ${p.title}\n\n${p.description}\n\nTech: ${techLine}`);
     }
   }
 
@@ -91,15 +92,12 @@ LinkedIn: linkedin.com/in/phan-thanh-nam`);
     pathSegments: string[];
   } {
     let dir = this.root;
-    const segments = relative
-      .split("/")
-      .filter((s) => s && s !== "." && s !== "..");
+    const segments = relative.split("/").filter((s) => s && s !== "." && s !== "..");
     // handle absolute paths
     const start = relative.startsWith("/") ? [] : this.cwd;
     const fullPath = [...start, ...segments];
 
-    if (fullPath.length === 0)
-      return { parent: dir, node: dir, pathSegments: [] };
+    if (fullPath.length === 0) return { parent: dir, node: dir, pathSegments: [] };
 
     for (let i = 0; i < fullPath.length - 1; i++) {
       const child = dir.children?.get(fullPath[i]);
@@ -156,9 +154,7 @@ LinkedIn: linkedin.com/in/phan-thanh-nam`);
     if (!node) return `cd: ${path}: No such file or directory`;
     if (node.type === "file") return `cd: ${path}: Not a directory`;
 
-    const segments = path
-      .split("/")
-      .filter((s) => s && s !== "." && s !== "..");
+    const segments = path.split("/").filter((s) => s && s !== "." && s !== "..");
     const start = path.startsWith("/") ? [] : this.cwd;
     this.cwd = [...start, ...segments];
     return "";
@@ -168,32 +164,44 @@ LinkedIn: linkedin.com/in/phan-thanh-nam`);
     return "/" + this.cwd.join("/");
   }
 
+  // Walk from root to the current working directory node
+  private _cwdNode(): FsNode | null {
+    let dir = this.root;
+    for (const seg of this.cwd) {
+      const child = dir.children?.get(seg);
+      if (!child || child.type !== "dir") return null;
+      dir = child;
+    }
+    return dir;
+  }
+
   // Tab completion: find all nodes under cwd that start with partial
   complete(partial: string): string[] {
-    const dir =
-      this.cwd.length === 0
-        ? this.root
-        : this.resolve(this.cwd.join("/"));
-    if (!dir || dir.type !== "dir" || !dir.children) return [];
+    // If partial contains a /, resolve the dir part first, then match under it
+    if (partial.includes("/")) {
+      const lastSlash = partial.lastIndexOf("/");
+      const dirPath = partial.slice(0, lastSlash);
+      const filePartial = partial.slice(lastSlash + 1);
+      const dir = this.resolve(dirPath);
+      if (!dir || dir.type !== "dir" || !dir.children) return [];
+      const matches: string[] = [];
+      for (const [name] of dir.children) {
+        if (name.startsWith(filePartial)) {
+          matches.push(dirPath + "/" + name);
+        }
+      }
+      return matches;
+    }
+
+    // Otherwise match under cwd
+    const dir = this._cwdNode();
+    if (!dir || !dir.children) return [];
 
     const matches: string[] = [];
     for (const [name] of dir.children) {
       if (name.startsWith(partial)) matches.push(name);
     }
-    // If partial contains a /, try completing at that depth
-    if (partial.includes("/")) {
-      const lastSlash = partial.lastIndexOf("/");
-      const parentPath = partial.slice(0, lastSlash);
-      const childPartial = partial.slice(lastSlash + 1);
-      const parent = this.resolve(parentPath);
-      if (parent && parent.type === "dir" && parent.children) {
-        for (const [name] of parent.children) {
-          if (name.startsWith(childPartial)) {
-            matches.push(parentPath + "/" + name);
-          }
-        }
-      }
-    }
+    matches.sort();
     return matches;
   }
 }
