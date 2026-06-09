@@ -1,0 +1,7 @@
+name = "portfolio"
+pages_build_output_dir = "dist"
+
+[[kv_namespaces]]
+binding = "VIEWS"
+id = "d05230e411e54cb891891e2d097f8506"
+preview_id = "d05230e411e54cb891891e2d097f8506"

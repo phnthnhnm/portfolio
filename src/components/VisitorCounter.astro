@@ -1,0 +1,18 @@
+<p id="visitor-count" class="text-xs text-slate-500 [&.loaded]:inline-block"></p>
+
+<script is:inline>
+  (async () => {
+    const el = document.getElementById("visitor-count");
+    if (!el) return;
+    try {
+      const res = await fetch("/api/counter");
+      if (!res.ok) return;
+      const { count } = await res.json();
+      if (typeof count !== "number" || count < 1) return;
+      el.textContent = `${count.toLocaleString()} views`;
+      el.classList.add("loaded");
+    } catch {
+      // Silently degrade — endpoint won't exist during local dev
+    }
+  })();
+</script>
