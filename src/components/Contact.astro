@@ -12,8 +12,7 @@
       <div class="card">
         <h3 class="mb-6 text-xl font-semibold">Send a Message</h3>
         <form
-          action="https://formspree.io/f/your-form-id"
-          method="POST"
+          id="contact-form"
           class="space-y-5"
         >
           <div>
@@ -55,16 +54,81 @@
               placeholder="Tell me about your project or opportunity..."
             ></textarea>
           </div>
+
+          <div id="form-status" class="hidden rounded-lg border px-4 py-3 text-sm"></div>
+
           <button
+            id="submit-btn"
             type="submit"
-            class="inline-flex items-center gap-2 rounded-lg bg-indigo-500 px-6 py-2.5 font-medium text-white transition-colors hover:bg-indigo-400"
+            class="inline-flex items-center gap-2 rounded-lg bg-indigo-500 px-6 py-2.5 font-medium text-white transition-colors hover:bg-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Send Message
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <span id="submit-text">Send Message</span>
+            <svg id="submit-icon" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+            </svg>
+            <svg id="spinner" class="hidden h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
             </svg>
           </button>
         </form>
+
+        <script is:inline>
+          const form = document.getElementById("contact-form");
+          const status = document.getElementById("form-status");
+          const submitBtn = document.getElementById("submit-btn");
+          const submitText = document.getElementById("submit-text");
+          const submitIcon = document.getElementById("submit-icon");
+          const spinner = document.getElementById("spinner");
+
+          form?.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const name = form.querySelector('[name="name"]');
+            const email = form.querySelector('[name="email"]');
+            const message = form.querySelector('[name="message"]');
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitText.textContent = "Sending...";
+            submitIcon.classList.add("hidden");
+            spinner.classList.remove("hidden");
+            status.classList.add("hidden");
+
+            try {
+              const res = await fetch("/api/contact", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  name: name?.value ?? "",
+                  email: email?.value ?? "",
+                  message: message?.value ?? "",
+                }),
+              });
+
+              const data = await res.json();
+
+              status.classList.remove("hidden");
+              if (res.ok) {
+                status.className = "rounded-lg border px-4 py-3 text-sm border-emerald-800 bg-emerald-500/10 text-emerald-400";
+                status.textContent = data.message;
+                form.reset();
+              } else {
+                status.className = "rounded-lg border px-4 py-3 text-sm border-red-800 bg-red-500/10 text-red-400";
+                status.textContent = data.error || "Something went wrong. Please try again.";
+              }
+            } catch {
+              status.classList.remove("hidden");
+              status.className = "rounded-lg border px-4 py-3 text-sm border-red-800 bg-red-500/10 text-red-400";
+              status.textContent = "Network error. Please check your connection and try again.";
+            } finally {
+              submitBtn.disabled = false;
+              submitText.textContent = "Send Message";
+              submitIcon.classList.remove("hidden");
+              spinner.classList.add("hidden");
+            }
+          });
+        </script>
       </div>
     </div>
 
