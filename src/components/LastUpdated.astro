@@ -2,11 +2,8 @@
 import { getGitLastModified } from "@utils/git";
 
 interface Props {
-  /** Path relative to the repo root, e.g. "src/pages/index.astro" */
   filePath: string;
-  /** The GitHub repository, e.g. "phnthnhnm/portfolio" */
   repo?: string;
-  /** The branch name, defaults to "main" */
   branch?: string;
 }
 
@@ -30,8 +27,9 @@ const githubUrl = `https://github.com/${repo}/blob/${branch}/${filePath}`;
   class="inline-flex items-center gap-1.5 text-xs text-slate-500 transition-colors hover:text-indigo-400"
   title={`View source: ${filePath}`}
 >
-  <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+  <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12 6 12 12 16 14" />
   </svg>
   Last updated {dateFormatted}
 </a>
