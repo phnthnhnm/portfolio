@@ -2,41 +2,23 @@
 interface ExperienceEntry {
   role: string;
   company: string;
+  companyUrl?: string;
   period: string;
   highlights: string[];
 }
 
 const experiences: ExperienceEntry[] = [
   {
-    role: "Backend Engineer",
-    company: "Your Company",
-    period: "2024 — Present",
+    role: "Software Engineering Intern — Backend",
+    company: "FPT Software Academy",
+    companyUrl: "https://fsoft-academy.edu.vn/",
+    period: "Aug 2024 — Nov 2024",
     highlights: [
-      "Designed and built RESTful APIs serving 100K+ daily requests",
-      "Optimized database queries reducing p95 latency by 40%",
-      "Implemented event-driven architecture using RabbitMQ for async processing",
-      "Led migration from monolith to microservices architecture",
-    ],
-  },
-  {
-    role: "Software Engineer",
-    company: "Previous Company",
-    period: "2022 — 2024",
-    highlights: [
-      "Developed backend services in .NET 6/8 with clean architecture patterns",
-      "Built CI/CD pipelines with GitHub Actions and Docker",
-      "Integrated third-party APIs and payment gateways",
-      "Mentored junior developers and conducted code reviews",
-    ],
-  },
-  {
-    role: "Junior Developer",
-    company: "First Company",
-    period: "2020 — 2022",
-    highlights: [
-      "Contributed to full-stack web applications with React and .NET",
-      "Wrote unit and integration tests achieving 85% code coverage",
-      "Participated in Agile/Scrum ceremonies and sprint planning",
+      "Served as the primary backend feature developer on a 7-intern team building an online learning platform",
+      "Implemented REST APIs with ASP.NET and MySQL, integrated AWS S3 for file uploads",
+      "Wrote unit tests with xUnit to ensure API reliability",
+      "Collaborated in a Scrum environment with daily stand-ups, sprint planning, and retrospectives using Taiga and GitLab",
+      "Earned a Level A rating (GPA 91.0)",
     ],
   },
 ];
@@ -61,7 +43,11 @@ const experiences: ExperienceEntry[] = [
             <div class="mb-1 flex flex-wrap items-center gap-2 text-sm text-slate-400">
               <span class="font-medium text-slate-300">{exp.role}</span>
               <span class="text-slate-600">•</span>
-              <span class="text-indigo-400">{exp.company}</span>
+              {exp.companyUrl ? (
+                <a href={exp.companyUrl} target="_blank" rel="noopener noreferrer" class="text-indigo-400 transition-colors hover:text-indigo-300">{exp.company}</a>
+              ) : (
+                <span class="text-indigo-400">{exp.company}</span>
+              )}
             </div>
             <p class="mb-4 font-mono text-xs text-slate-500">{exp.period}</p>
             <ul class="space-y-2">
