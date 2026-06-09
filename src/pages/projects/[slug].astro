@@ -17,11 +17,10 @@ interface Props {
 const { project } = Astro.props;
 const { Content, headings } = await render(project);
 
-// Filter to h2 and h3 only for TOC
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
-<BaseLayout title={`${project.data.title} — Phan Thành Nam`} description={project.data.description} sourceFile={`src/content/projects/${project.id}`}>
+<BaseLayout title={`${project.data.title} — Phan Thành Nam`} description={project.data.description} sourceFile={`src/content/projects/${project.id}.md`}>
   <article class="section-container pt-24">
     <!-- Back link — defaults to /#projects, switches to /projects/ if referrer is the projects list page -->
     <a
