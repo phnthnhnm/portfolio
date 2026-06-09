@@ -23,6 +23,8 @@ Type 'help' to see available commands.
 
 export default function Terminal({ projects = [] }: Props) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [input, setInput] = useState("");
   const [history, setHistory] = useState<CommandOutput[]>([]);
   const [cmdHistory, setCmdHistory] = useState<string[]>([]);
@@ -31,10 +33,45 @@ export default function Terminal({ projects = [] }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const outputRef = useRef<HTMLDivElement>(null);
 
-  // Create filesystem once
   const [fs] = useState(() => new FileSystem(projects));
 
-  // Build commands that close over fs and setPromptPath
+  const closeTerminal = useCallback(() => {
+    setIsOpen(false);
+    setIsMinimized(false);
+    setIsFullscreen(false);
+    setHistory([]);
+    setCmdHistory([]);
+    setHistoryIdx(-1);
+    setInput("");
+    fs.cwd = [];
+    setPromptPath("~");
+  }, []);
+
+  const minimizeTerminal = useCallback(() => {
+    setIsOpen(false);
+    setIsMinimized(true);
+  }, []);
+
+  const toggleTerminal = useCallback(() => {
+    if (isMinimized && !isOpen) {
+      setIsOpen(true);
+      setIsMinimized(false);
+    } else if (isOpen) {
+      minimizeTerminal();
+    } else {
+      setIsOpen(true);
+    }
+  }, [isOpen, isMinimized]);
+
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsFullscreen(false);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [isFullscreen]);
+
   const commands: Record<string, (args: string[]) => string> = {
     help: () =>
       `Available commands:
@@ -45,6 +82,7 @@ export default function Terminal({ projects = [] }: Props) {
   whoami      — Who I am
   contact     — How to reach me
   clear       — Clear the terminal
+  exit        — Close the terminal
   help        — Show this help`,
 
     whoami: () =>
@@ -60,7 +98,6 @@ Focus: Scalable APIs, Distributed Systems, Cloud Infrastructure`,
     cd: (args) => {
       const err = fs.cd(args[0]);
       if (err) return err;
-      // Update prompt display
       const p = fs.pwd();
       setPromptPath(p === "/" ? "/" : p.replace(/^\//, ""));
       return "";
@@ -71,6 +108,11 @@ Focus: Scalable APIs, Distributed Systems, Cloud Infrastructure`,
     contact: () => fs.cat("contact.txt") ?? "No contact info found.",
 
     clear: () => "__CLEAR__",
+
+    exit: () => {
+      closeTerminal();
+      return "";
+    },
   };
 
   useEffect(() => {
@@ -150,11 +192,7 @@ Focus: Scalable APIs, Distributed Systems, Cloud Infrastructure`,
           setInput(prefix + fileMatches[0]);
         } else if (fileMatches.length > 1) {
           const prompt = promptPath || "~";
-          setHistory((prev) => [
-            ...prev,
-            { type: "input", text: `${prompt} $ ${input}` },
-            { type: "output", text: fileMatches.join("  ") },
-          ]);
+          setHistory((prev) => [...prev, { type: "input", text: `${prompt} $ ${input}` }, { type: "output", text: fileMatches.join("  ") }]);
         }
         return;
       }
@@ -164,37 +202,46 @@ Focus: Scalable APIs, Distributed Systems, Cloud Infrastructure`,
       if (cmdMatches.length === 1) {
         setInput(cmdMatches[0] + " ");
       } else if (cmdMatches.length > 1) {
-        // Show ambiguous command matches
         const prompt = promptPath || "~";
-        setHistory((prev) => [
-          ...prev,
-          { type: "input", text: `${prompt} $ ${input}` },
-          { type: "output", text: cmdMatches.join("  ") },
-        ]);
+        setHistory((prev) => [...prev, { type: "input", text: `${prompt} $ ${input}` }, { type: "output", text: cmdMatches.join("  ") }]);
         setInput("");
       } else {
-        // No command matches, try filename completion
         const fileMatches = fs.complete(trimmed);
         if (fileMatches.length === 1) {
           setInput(fileMatches[0] + " ");
         } else if (fileMatches.length > 1) {
           const prompt = promptPath || "~";
-          setHistory((prev) => [
-            ...prev,
-            { type: "input", text: `${prompt} $ ${input}` },
-            { type: "output", text: fileMatches.join("  ") },
-          ]);
+          setHistory((prev) => [...prev, { type: "input", text: `${prompt} $ ${input}` }, { type: "output", text: fileMatches.join("  ") }]);
           setInput("");
         }
       }
     }
   };
 
+  // Lock body scroll while terminal is open (preserve scroll position, compensate scrollbar)
+  const scrollY = useRef(0);
+  useEffect(() => {
+    if (isOpen) {
+      scrollY.current = window.scrollY;
+      const scrollbarW = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = `${scrollbarW}px`;
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+      window.scrollTo(0, scrollY.current);
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+    };
+  }, [isOpen]);
+
   useEffect(() => {
     if (isOpen) {
       inputRef.current?.focus();
     }
-  }, [isOpen]);
+  }, [isOpen, isFullscreen]);
 
   const focusInput = () => {
     inputRef.current?.focus();
@@ -204,10 +251,11 @@ Focus: Scalable APIs, Distributed Systems, Cloud Infrastructure`,
     <>
       {/* Floating toggle button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggleTerminal}
         class="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-slate-800 border border-slate-700 text-indigo-400 shadow-lg transition-all hover:bg-slate-700 hover:scale-105"
         aria-label={isOpen ? "Close terminal" : "Open terminal"}
       >
+        {isMinimized && !isOpen && <span class="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-500 text-[8px] font-bold text-slate-950">!</span>}
         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="4 17 10 11 4 5" />
           <line x1="12" y1="19" x2="20" y2="19" />
@@ -216,19 +264,25 @@ Focus: Scalable APIs, Distributed Systems, Cloud Infrastructure`,
 
       {/* Terminal window */}
       {isOpen && (
-        <div class="fixed bottom-24 right-6 z-50 w-[min(90vw,550px)] overflow-hidden rounded-xl border border-slate-700 bg-slate-950 shadow-2xl">
+        <div
+          class={`fixed z-50 flex flex-col overflow-hidden rounded-xl border border-slate-700 bg-slate-950 shadow-2xl transition-all ${isFullscreen ? "inset-4" : "bottom-24 right-6 w-[min(90vw,550px)] h-[min(550px,60vh)]"}`}
+        >
           {/* Title bar */}
-          <div class="flex items-center gap-2 border-b border-slate-800 bg-slate-900 px-4 py-2.5">
+          <div class="flex shrink-0 items-center gap-2 border-b border-slate-800 bg-slate-900 px-4 py-2.5">
             <div class="flex gap-1.5">
-              <button onClick={() => setIsOpen(false)} class="h-3 w-3 rounded-full bg-red-500 transition-colors hover:bg-red-400" aria-label="Close terminal" />
-              <div class="h-3 w-3 rounded-full bg-yellow-500" />
-              <div class="h-3 w-3 rounded-full bg-emerald-500" />
+              <button onClick={closeTerminal} class="h-3 w-3 rounded-full bg-red-500 transition-colors hover:bg-red-400" aria-label="Close terminal" />
+              <button onClick={minimizeTerminal} class="h-3 w-3 rounded-full bg-yellow-500 transition-colors hover:bg-yellow-400" aria-label="Minimize terminal" />
+              <button
+                onClick={() => setIsFullscreen(!isFullscreen)}
+                class="h-3 w-3 rounded-full bg-emerald-500 transition-colors hover:bg-emerald-400"
+                aria-label={isFullscreen ? "Exit fullscreen" : "Fullscreen terminal"}
+              />
             </div>
             <span class="ml-2 font-mono text-xs text-slate-500">terminal — phnthnhnm</span>
           </div>
 
           {/* Output area */}
-          <div ref={outputRef} onClick={focusInput} class="h-87.5 overflow-y-auto p-4 font-mono text-sm leading-relaxed cursor-text">
+          <div ref={outputRef} onClick={focusInput} data-terminal-scroll class="flex-1 overflow-y-auto overscroll-contain p-4 font-mono text-sm leading-relaxed cursor-text">
             {/* Banner */}
             <div class="mb-2 whitespace-pre text-indigo-400 text-xs leading-tight select-none">{banner}</div>
 
@@ -255,7 +309,6 @@ Focus: Scalable APIs, Distributed Systems, Cloud Infrastructure`,
                 autocomplete="off"
                 aria-label="Terminal input"
               />
-              <span class="ml-0.5 inline-block h-4 w-1.5 animate-pulse bg-indigo-400 select-none" />
             </div>
           </div>
         </div>

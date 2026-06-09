@@ -21,13 +21,11 @@
     @apply bg-slate-950 text-slate-100 antialiased;
   }
 
-  /* Selection color */
   ::selection {
     background-color: var(--color-accent);
     color: white;
   }
 
-  /* Scrollbar styling */
   ::-webkit-scrollbar {
     width: 8px;
   }
@@ -40,6 +38,21 @@
   }
   ::-webkit-scrollbar-thumb:hover {
     background: var(--color-text-muted);
+  }
+
+  [data-terminal-scroll]::-webkit-scrollbar-track {
+    background: #0f172a;
+  }
+  [data-terminal-scroll]::-webkit-scrollbar-thumb {
+    background: #4338ca;
+  }
+  [data-terminal-scroll]::-webkit-scrollbar-thumb:hover {
+    background: #6366f1;
+  }
+
+  [data-terminal-scroll] {
+    scrollbar-color: #4338ca #0f172a;
+    scrollbar-width: thin;
   }
 }
 
@@ -59,7 +72,6 @@
   .badge {
     @apply inline-flex items-center rounded-full bg-slate-800 px-3 py-1 text-xs font-medium text-slate-300;
   }
-
 }
 
 @layer utilities {
@@ -68,10 +80,7 @@
   }
 }
 
-/* Shiki code blocks in prose: Tailwind Typography renders HTML whitespace
-   between <code> and the first <span class="line"> as a visible character.
-   font-size:0 on <code> collapses all whitespace to zero width; inner spans
-   restore the font. Also reset inline-code styling (bg, padding, radius). */
+/* Shiki code blocks in prose */
 .prose pre.astro-code {
   display: block;
   overflow-x: auto;
