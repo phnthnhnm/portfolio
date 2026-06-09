@@ -83,3 +83,63 @@
     @apply bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent;
   }
 }
+
+/* Shiki code blocks in prose: Tailwind Typography renders HTML whitespace
+   between <code> and the first <span class="line"> as a visible character.
+   font-size:0 on <code> collapses all whitespace to zero width; inner spans
+   restore the font. Also reset inline-code styling (bg, padding, radius). */
+.prose pre.astro-code {
+  display: block;
+  overflow-x: auto;
+  background-color: #0f172a !important;
+}
+.prose pre.astro-code > code {
+  font-size: 0;
+  display: block;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+.prose pre.astro-code .line span {
+  font-size: var(--text-sm, 0.875rem);
+}
+
+/* Copy button on code blocks */
+.code-block-wrapper {
+  position: relative;
+}
+.code-block-wrapper pre {
+  margin: 0;
+}
+.copy-code-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.375rem;
+  border: 1px solid #334155;
+  background: #1e293b;
+  color: #94a3b8;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s, background 0.15s;
+}
+.code-block-wrapper:hover .copy-code-btn,
+.copy-code-btn.copied {
+  opacity: 1;
+}
+.copy-code-btn:hover {
+  color: #e2e8f0;
+  background: #334155;
+}
+.copy-code-btn.copied {
+  color: #34d399;
+  border-color: #34d39933;
+  background: #34d39915;
+}
+
