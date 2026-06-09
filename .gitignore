@@ -10,4 +10,5 @@ dist/
 .DS_Store
 Thumbs.db
 .astro/
+.lighthouseci/
 CLAUDE.md
