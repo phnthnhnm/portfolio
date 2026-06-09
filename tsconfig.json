@@ -3,7 +3,7 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
-    "types": ["astro/client", "node"],
+    "types": ["astro/client", "node", "@cloudflare/workers-types"],
     "paths": {
       "@/*": ["./src/*"],
       "@components/*": ["./src/components/*"],

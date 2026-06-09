@@ -1,11 +1,11 @@
 ---
-import { getCollection, type CollectionEntry } from "astro:content";
+import { getCollection, render, type CollectionEntry } from "astro:content";
 import BaseLayout from "@layouts/BaseLayout.astro";
 
 export async function getStaticPaths() {
   const projects = await getCollection("projects");
   return projects.map((p) => ({
-    params: { slug: p.id.replace(/\.md$/, "") },
+    params: { slug: p.id },
     props: { project: p },
   }));
 }
@@ -15,7 +15,7 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const { Content, headings } = await project.render();
+const { Content, headings } = await render(project);
 
 // Filter to h2 and h3 only for TOC
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);

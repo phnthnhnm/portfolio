@@ -4,13 +4,8 @@ import { getCollection } from "astro:content";
 const allProjects = (await getCollection("projects"))
   .sort((a, b) => a.data.order - b.data.order);
 
-// Only show iras-rag and evdms on the home page
 const featuredSlugs = ["iras-rag", "evdms"];
-const projects = allProjects.filter((p) => featuredSlugs.includes(p.id.replace(/\.md$/, "")));
-
-function slug(id: string) {
-  return id.replace(/\.md$/, "");
-}
+const projects = allProjects.filter((p) => featuredSlugs.includes(p.id));
 ---
 
 <section id="projects" class="section-container">
@@ -23,7 +18,7 @@ function slug(id: string) {
       <div class="card group flex flex-col">
         <div class="mb-4 flex items-start justify-between">
           <a
-            href={`/projects/${slug(project.id)}/`}
+            href={`/projects/${project.id}/`}
             class="text-xl font-semibold transition-colors hover:text-indigo-400"
           >
             {project.data.title}
@@ -73,7 +68,7 @@ function slug(id: string) {
 
         <!-- View details link -->
         <a
-          href={`/projects/${slug(project.id)}/`}
+          href={`/projects/${project.id}/`}
           class="inline-flex items-center gap-1 text-sm font-medium text-indigo-400 transition-colors hover:text-indigo-300"
         >
           View Details

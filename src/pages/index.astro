@@ -11,7 +11,7 @@ import Terminal from "@components/Terminal.island.tsx";
 
 const allProjects = await getCollection("projects");
 const terminalProjects = allProjects.map((p) => ({
-  id: p.id.replace(/\.md$/, ""),
+  id: p.id,
   title: p.data.title,
   description: p.data.description,
   techStack: p.data.techStack,
