@@ -1,15 +1,18 @@
 ---
 import Footer from "@components/Footer.astro";
 import Header from "@components/Header.astro";
+import LastUpdated from "@components/LastUpdated.astro";
 import SEO from "@components/SEO.astro";
 import "../styles/global.css";
 
 interface Props {
   title?: string;
   description?: string;
+  /** Path relative to repo root for the "last updated" link, e.g. "src/pages/index.astro" */
+  sourceFile?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, sourceFile } = Astro.props;
 ---
 
 <!doctype html>
@@ -26,6 +29,13 @@ const { title, description } = Astro.props;
       <slot />
     </main>
     <Footer />
+    {
+      sourceFile && (
+        <div class="flex justify-center pb-8">
+          <LastUpdated filePath={sourceFile} />
+        </div>
+      )
+    }
 
     <button
       id="scroll-top-btn"
