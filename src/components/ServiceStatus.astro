@@ -239,16 +239,57 @@
     }
 
     var autoInterval;
+    var checking = false;
+    var cooldown = false;
+    var COOLDOWN_S = 10;
+    var cooldownTimer = null;
+    var originalBtnHtml = refreshBtn.innerHTML;
 
     function updateTimestamp() {
       lastCheckedEl.textContent = "Last checked: " + new Date().toLocaleTimeString() + "  ·  Auto-refreshes every " + REFRESH_INTERVAL_S + "s";
     }
 
+    function setButtonDisabled(disabled) {
+      refreshBtn.disabled = disabled;
+      if (disabled) {
+        refreshBtn.classList.add("opacity-50", "cursor-not-allowed");
+      } else {
+        refreshBtn.classList.remove("opacity-50", "cursor-not-allowed");
+      }
+    }
+
+    function startCooldown() {
+      cooldown = true;
+      setButtonDisabled(true);
+      var remaining = COOLDOWN_S;
+      refreshBtn.innerHTML = '<span class="tabular-nums">Wait ' + remaining + 's</span>';
+
+      cooldownTimer = setInterval(function () {
+        remaining--;
+        if (remaining <= 0) {
+          clearInterval(cooldownTimer);
+          cooldownTimer = null;
+          cooldown = false;
+          refreshBtn.innerHTML = originalBtnHtml;
+          if (!checking) setButtonDisabled(false);
+        } else {
+          refreshBtn.innerHTML = '<span class="tabular-nums">Wait ' + remaining + 's</span>';
+        }
+      }, 1000);
+    }
+
     async function checkAll() {
+      if (checking || cooldown) return;
+      checking = true;
+      setButtonDisabled(true);
+
       renderChecking();
       var results = await Promise.all(SERVICES.map(checkService));
       renderResults(results);
       updateTimestamp();
+
+      checking = false;
+      startCooldown();
     }
 
     function resetInterval() {
