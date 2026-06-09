@@ -26,7 +26,7 @@ I went with Astro because it ships zero JavaScript by default. Every component o
 The site is pure static output. Astro builds everything to flat HTML, CSS, and JS files at deploy time. There's no server, no database, no API calls at runtime.
 
 - **Astro 5** handles routing, content collections, and the build pipeline. I used its `getStaticPaths` API for the project detail pages so each project gets its own URL without any client-side routing.
-- **Tailwind CSS v4** with the Typography plugin handles all styling. The dark theme uses CSS custom properties defined in a `@theme` block. Light mode toggles by adding a `.light` class on `<body>`, which swaps the variable values.
+- **Tailwind CSS v4** with the Typography plugin handles all styling. The dark theme uses CSS custom properties defined in a `@theme` block.
 - **Preact** powers the two interactive islands: the floating terminal emulator and the Mermaid diagram viewer. Preact is about 3KB instead of React's 40KB.
 - **TypeScript** for the Astro config, content collection schemas, and the Preact terminal component.
 - **Cloudflare Pages** handles deployment. I connected the GitHub repo and Cloudflare auto-detects Astro, runs `pnpm build`, and deploys the `dist/` folder to my custom domain.
@@ -47,7 +47,6 @@ portfolio/
 │   │   ├── Skills.astro            # Categorized tech tags
 │   │   ├── Contact.astro           # Formspree form + social links
 │   │   ├── Terminal.island.tsx     # Preact island: interactive terminal
-│   │   ├── ThemeToggle.astro       # Dark/light with system preference
 │   │   └── SEO.astro               # Meta tags, OG, JSON-LD
 │   ├── content/
 │   │   ├── config.ts               # Zod schemas for project frontmatter
@@ -106,10 +105,6 @@ The overlay uses `onwheel` and `onmousedown` properties (not `addEventListener`)
 ### Floating table of contents
 
 Project detail pages have a sticky sidebar that lists every `h2` and `h3` heading from the Markdown content. An `IntersectionObserver` with a root margin of `-80px 0px -70% 0px` tracks which section is currently visible and highlights the corresponding TOC link. The TOC is hidden on mobile and only appears on desktop where there's room.
-
-### Dark/light theme
-
-Theme state is persisted to `localStorage`. On first visit, the site checks for a saved preference, then falls back to `prefers-color-scheme`. The toggle button swaps sun/moon icons and toggles a `.light` class on `<body>`. CSS custom properties handle the rest — colors, borders, card backgrounds all switch in one paint frame with no JS-driven re-renders.
 
 ---
 

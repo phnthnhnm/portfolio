@@ -9,11 +9,6 @@
   --color-border: #1e293b;
   --color-text: #f1f5f9;
   --color-text-muted: #94a3b8;
-  --color-bg-light: #f8fafc;
-  --color-card-light: #ffffff;
-  --color-border-light: #e2e8f0;
-  --color-text-light: #0f172a;
-  --color-text-muted-light: #64748b;
 }
 
 @layer base {
@@ -24,10 +19,6 @@
 
   body {
     @apply bg-slate-950 text-slate-100 antialiased;
-  }
-
-  body.light {
-    @apply bg-slate-50 text-slate-900;
   }
 
   /* Selection color */
@@ -65,17 +56,10 @@
     @apply rounded-xl border border-slate-800 bg-slate-900/50 p-6 transition-all duration-300 hover:border-slate-700 hover:shadow-lg;
   }
 
-  body.light .card {
-    @apply border-slate-200 bg-white hover:border-slate-300 hover:shadow-md;
-  }
-
   .badge {
     @apply inline-flex items-center rounded-full bg-slate-800 px-3 py-1 text-xs font-medium text-slate-300;
   }
 
-  body.light .badge {
-    @apply bg-slate-100 text-slate-600;
-  }
 }
 
 @layer utilities {
