@@ -1,6 +1,6 @@
 <button
   id="theme-toggle"
-  class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-200"
+  class="rounded-lg p-3 text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-200"
   aria-label="Toggle theme"
 >
   <!-- Sun icon (shown in dark mode) -->
@@ -35,12 +35,12 @@
   </svg>
 </button>
 
-<script>
+<script is:inline>
   const toggle = document.getElementById("theme-toggle");
   const sunIcon = document.getElementById("sun-icon");
   const moonIcon = document.getElementById("moon-icon");
 
-  function setTheme(isLight: boolean) {
+  function setTheme(isLight) {
     document.body.classList.toggle("light", isLight);
     sunIcon?.classList.toggle("hidden", isLight);
     moonIcon?.classList.toggle("hidden", !isLight);

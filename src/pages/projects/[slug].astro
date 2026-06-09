@@ -21,7 +21,7 @@ const { Content, headings } = await project.render();
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
-<BaseLayout title={`${project.data.title} — Phan Thanh Nam`} description={project.data.description}>
+<BaseLayout title={`${project.data.title} — Phan Thành Nam`} description={project.data.description}>
   <article class="section-container pt-24">
     <!-- Back link -->
     <a
@@ -136,7 +136,7 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
   </article>
 </BaseLayout>
 
-<script>
+<script is:inline>
   // Highlight active TOC link on scroll
   const tocLinks = document.querySelectorAll("[data-toc-link]");
   if (tocLinks.length > 0) {

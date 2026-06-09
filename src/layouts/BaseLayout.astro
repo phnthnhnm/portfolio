@@ -29,7 +29,7 @@ const { title, description } = Astro.props;
 
     <button
       id="scroll-top-btn"
-      class="pointer-events-none fixed left-1/2 top-0 z-50 -translate-x-1/2 -translate-y-full rounded-b-md border border-t-0 border-slate-800 bg-slate-900/90 px-4 py-2 text-sm text-slate-400 opacity-0 shadow-md backdrop-blur transition-all duration-300 hover:text-slate-200 hover:border-slate-700 md:px-3 md:py-1 md:text-[11px] md:leading-none"
+      class="pointer-events-none fixed left-1/2 top-0 z-50 -translate-x-1/2 -translate-y-full rounded-b-md border border-t-0 border-slate-800 bg-slate-900/90 px-4 py-3 text-sm text-slate-400 opacity-0 shadow-md backdrop-blur transition-all duration-300 hover:text-slate-200 hover:border-slate-700 md:px-3 md:py-1 md:text-[11px] md:leading-none"
       aria-label="Scroll to top"
     >
       <svg class="mr-1 inline-block h-3 w-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -38,7 +38,7 @@ const { title, description } = Astro.props;
       Back to top
     </button>
 
-    <script>
+    <script is:inline>
       const scrollBtn = document.getElementById("scroll-top-btn");
       if (scrollBtn) {
         window.addEventListener("scroll", () => {
