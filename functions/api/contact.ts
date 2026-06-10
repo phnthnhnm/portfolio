@@ -56,7 +56,7 @@ export const onRequestPost = async ({ request, env }: { request: Request; env: E
       return new Response(JSON.stringify({ error: "Failed to send message. Please try again later." }), { status: 502, headers: { "Content-Type": "application/json" } });
     }
 
-    return new Response(JSON.stringify({ success: true, message: "Message sent! I'll get back to you soon." }), { status: 200, headers: { "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ success: true, message: "Message sent! I'll get back to you soon!" }), { status: 200, headers: { "Content-Type": "application/json" } });
   } catch (err) {
     console.error("Resend request failed:", err);
     return new Response(JSON.stringify({ error: "Failed to send message. Please try again later." }), { status: 502, headers: { "Content-Type": "application/json" } });

@@ -15,6 +15,7 @@
           id="contact-form"
           class="space-y-5"
         >
+          <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
           <div>
             <label for="name" class="mb-1.5 block text-sm font-medium text-slate-300">
               Name
@@ -69,6 +70,8 @@
 
           <div id="form-status" class="hidden rounded-lg border px-4 py-3 text-sm"></div>
 
+          <div class="cf-turnstile" data-sitekey="0x4AAAAAADh_ACt6E4L070-w" data-action="turnstile-spin-v1"></div>
+
           <button
             id="submit-btn"
             type="submit"
@@ -101,15 +104,32 @@
             const email = form.querySelector('[name="email"]');
             const subject = form.querySelector('[name="subject"]');
             const message = form.querySelector('[name="message"]');
+            const turnstileToken = form.querySelector('[name="cf-turnstile-response"]');
 
-            // Show loading state
             submitBtn.disabled = true;
-            submitText.textContent = "Sending...";
+            submitText.textContent = "Verifying...";
             submitIcon.classList.add("hidden");
             spinner.classList.remove("hidden");
             status.classList.add("hidden");
 
             try {
+              const verifyRes = await fetch("https://turnstile-siteverify-portfolio.phnthnhnm0612.workers.dev", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token: turnstileToken?.value ?? "" }),
+              });
+
+              const verifyData = await verifyRes.json();
+
+              if (!verifyData.success) {
+                status.classList.remove("hidden");
+                status.className = "rounded-lg border px-4 py-3 text-sm border-red-800 bg-red-500/10 text-red-400";
+                status.textContent = "Verification failed. Please try again.";
+                return;
+              }
+
+              submitText.textContent = "Sending...";
+
               const res = await fetch("/api/contact", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -141,6 +161,7 @@
               submitText.textContent = "Send Message";
               submitIcon.classList.remove("hidden");
               spinner.classList.add("hidden");
+              if (typeof turnstile !== "undefined") turnstile.reset();
             }
           });
         </script>
