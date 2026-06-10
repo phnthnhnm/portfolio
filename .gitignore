@@ -12,3 +12,5 @@ Thumbs.db
 .astro/
 .lighthouseci/
 CLAUDE.md
+.wrangler/
+.dev.*

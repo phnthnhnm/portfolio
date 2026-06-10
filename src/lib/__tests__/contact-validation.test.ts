@@ -108,6 +108,79 @@ describe("validateContact", () => {
     });
   });
 
+  describe("subject validation", () => {
+    it("accepts missing subject (optional field)", () => {
+      const result = validateContact({
+        name: "John",
+        email: "a@b.com",
+        message: "Hello world, testing testing",
+      });
+      expect(result.valid).toBe(true);
+    });
+
+    it("accepts empty subject as missing", () => {
+      const result = validateContact({
+        name: "John",
+        email: "a@b.com",
+        subject: "   ",
+        message: "Hello world, testing testing",
+      });
+      expect(result.valid).toBe(true);
+      if (result.valid) {
+        expect(result.data.subject).toBeUndefined();
+      }
+    });
+
+    it("trims whitespace from subject", () => {
+      const result = validateContact({
+        name: "John",
+        email: "a@b.com",
+        subject: "  Collaboration Opportunity  ",
+        message: "Hello world, testing testing",
+      });
+      expect(result.valid).toBe(true);
+      if (result.valid) {
+        expect(result.data.subject).toBe("Collaboration Opportunity");
+      }
+    });
+
+    it("rejects subject over 200 chars", () => {
+      const result = validateContact({
+        name: "John",
+        email: "a@b.com",
+        subject: "x".repeat(201),
+        message: "Hello world, testing testing",
+      });
+      expect(result.valid).toBe(false);
+      if (!result.valid) {
+        expect(result.errors).toContain("Subject must be under 200 characters.");
+      }
+    });
+
+    it("accepts subject exactly 200 chars", () => {
+      const result = validateContact({
+        name: "John",
+        email: "a@b.com",
+        subject: "x".repeat(200),
+        message: "Hello world, testing testing",
+      });
+      expect(result.valid).toBe(true);
+    });
+
+    it("rejects subject that is not a string", () => {
+      const result = validateContact({
+        name: "John",
+        email: "a@b.com",
+        subject: 12345,
+        message: "Hello world, testing testing",
+      });
+      expect(result.valid).toBe(false);
+      if (!result.valid) {
+        expect(result.errors).toContain("Subject must be a string.");
+      }
+    });
+  });
+
   describe("message validation", () => {
     it("rejects missing message", () => {
       const result = validateContact({

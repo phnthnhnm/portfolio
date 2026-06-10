@@ -29,7 +29,9 @@ export const onRequestPost = async ({ request, env }: { request: Request; env: E
     });
   }
 
-  const { name, email, message } = validation.data;
+  const { name, email, subject, message } = validation.data;
+
+  const emailSubject = subject ? `Portfolio Contact: ${subject}` : `Portfolio Contact: ${name.trim()}`;
 
   // Send email via Resend
   try {
@@ -42,9 +44,9 @@ export const onRequestPost = async ({ request, env }: { request: Request; env: E
       body: JSON.stringify({
         from: FROM_EMAIL,
         to: TO_EMAIL,
-        subject: `Portfolio Contact: ${name.trim()}`,
+        subject: emailSubject,
         reply_to: email.trim(),
-        text: `Name: ${name.trim()}\nEmail: ${email.trim()}\n\nMessage:\n${message.trim()}`,
+        text: `Name: ${name.trim()}\nEmail: ${email.trim()}${subject ? `\nSubject: ${subject}` : ""}\n\nMessage:\n${message.trim()}`,
       }),
     });
 

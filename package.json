@@ -4,11 +4,12 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "astro dev",
+    "dev:full": "astro build && wrangler pages dev dist",
     "build": "astro build",
+    "build:ci": "pnpm test && pnpm build",
     "preview": "astro preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "build:ci": "pnpm test && pnpm build",
     "lighthouse": "astro build && node scripts/lighthouse.mjs",
     "lighthouse:ci": "astro build && node scripts/lighthouse.mjs --ci"
   },
@@ -28,6 +29,7 @@
     "@types/mdast": "^4.0.4",
     "@types/node": "^25.9.2",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.8",
+    "wrangler": "^4.98.0"
   }
 }
