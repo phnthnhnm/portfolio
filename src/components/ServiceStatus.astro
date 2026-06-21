@@ -64,7 +64,7 @@
 
 <script is:inline>
   (() => {
-    var SERVICES = [
+    const SERVICES = [
       {
         id: 'contact',
         name: 'Contact API',
@@ -88,20 +88,20 @@
       },
     ];
 
-    var TIMEOUT_MS = 5000;
-    var SLOW_THRESHOLD_MS = 1500;
-    var REFRESH_INTERVAL_S = 60;
+    const TIMEOUT_MS = 5000;
+    const SLOW_THRESHOLD_MS = 1500;
+    const REFRESH_INTERVAL_S = 60;
 
-    var container = document.getElementById('service-status');
+    const container = document.getElementById('service-status');
     if (!container) return;
 
-    var summaryEl = document.getElementById('status-summary');
-    var summaryIconEl = document.getElementById('status-summary-icon');
-    var summaryTextEl = document.getElementById('status-summary-text');
-    var summaryDetailEl = document.getElementById('status-summary-detail');
-    var lastCheckedEl = document.getElementById('status-last-checked');
-    var refreshBtn = document.getElementById('status-refresh-btn');
-    var servicesEl = document.getElementById('status-services');
+    const summaryEl = document.getElementById('status-summary');
+    const summaryIconEl = document.getElementById('status-summary-icon');
+    const summaryTextEl = document.getElementById('status-summary-text');
+    const summaryDetailEl = document.getElementById('status-summary-detail');
+    const lastCheckedEl = document.getElementById('status-last-checked');
+    const refreshBtn = document.getElementById('status-refresh-btn');
+    const servicesEl = document.getElementById('status-services');
 
     function statusIcon(status) {
       switch (status) {
@@ -128,25 +128,25 @@
     }
 
     async function checkService(svc) {
-      var controller = new AbortController();
-      var timeout = setTimeout(function () {
+      const controller = new AbortController();
+      const timeout = setTimeout(function () {
         controller.abort();
       }, TIMEOUT_MS);
 
-      var start = performance.now();
+      const start = performance.now();
       try {
-        var init = { signal: controller.signal };
+        const init = { signal: controller.signal };
         if (svc.cors === 'no-cors') {
           init.mode = 'no-cors';
         } else {
           init.method = svc.method || 'GET';
         }
-        var response = await fetch(svc.url, init);
-        var latency = performance.now() - start;
+        const response = await fetch(svc.url, init);
+        const latency = performance.now() - start;
         clearTimeout(timeout);
 
         if (svc.proxy) {
-          var data = await response.json();
+          const data = await response.json();
           return {
             id: svc.id,
             name: data.name || svc.name,
@@ -166,7 +166,7 @@
         };
       } catch (err) {
         clearTimeout(timeout);
-        var isTimeout = err instanceof DOMException && err.name === 'AbortError';
+        const isTimeout = err instanceof DOMException && err.name === 'AbortError';
         return {
           id: svc.id,
           name: svc.name,
@@ -179,7 +179,7 @@
     }
 
     // Pre-compute descriptions lookup
-    var descriptions = {};
+    const descriptions = {};
     SERVICES.forEach(function (s) {
       descriptions[s.id] = s.description;
     });
@@ -247,20 +247,20 @@
         })
         .join('');
 
-      var down = results.filter(function (r) {
+      const down = results.filter(function (r) {
         return r.status === 'down';
       }).length;
-      var slow = results.filter(function (r) {
+      const slow = results.filter(function (r) {
         return r.status === 'slow';
       }).length;
 
-      var status, icon, text, detail;
+      let status, icon, text, detail;
 
       if (down > 0) {
         status = 'down';
         icon = statusIcon('down');
         text = down + ' service' + (down > 1 ? 's' : '') + ' down';
-        var parts = [];
+        let parts = [];
         if (down) parts.push(down + ' unreachable');
         if (slow) parts.push(slow + ' degraded');
         detail = parts.join(', ');
@@ -282,7 +282,7 @@
         /border-l-(slate|red|amber|emerald)-\d+/,
         '',
       );
-      var borderColor = {
+      const borderColor = {
         up: 'border-l-emerald-500',
         slow: 'border-l-amber-500',
         down: 'border-l-red-500',
@@ -294,12 +294,12 @@
       summaryDetailEl.textContent = detail;
     }
 
-    var autoInterval;
-    var checking = false;
-    var cooldown = false;
-    var COOLDOWN_S = 10;
-    var cooldownTimer = null;
-    var originalBtnHtml = refreshBtn.innerHTML;
+    let autoInterval;
+    let checking = false;
+    let cooldown = false;
+    const COOLDOWN_S = 10;
+    let cooldownTimer = null;
+    const originalBtnHtml = refreshBtn.innerHTML;
 
     function updateTimestamp() {
       lastCheckedEl.textContent =
@@ -322,7 +322,7 @@
     function startCooldown() {
       cooldown = true;
       setButtonDisabled(true);
-      var remaining = COOLDOWN_S;
+      let remaining = COOLDOWN_S;
       refreshBtn.innerHTML = '<span class="tabular-nums">Wait ' + remaining + 's</span>';
 
       cooldownTimer = setInterval(function () {
@@ -345,7 +345,7 @@
       setButtonDisabled(true);
 
       renderChecking();
-      var results = await Promise.all(SERVICES.map(checkService));
+      const results = await Promise.all(SERVICES.map(checkService));
       renderResults(results);
       updateTimestamp();
 

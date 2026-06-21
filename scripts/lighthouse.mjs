@@ -42,7 +42,9 @@ function findChrome() {
         process.env.CHROME_PATH = path;
         return;
       }
-    } catch {}
+    } catch {
+      /* Chrome not found at this path, try next */
+    }
   }
 }
 

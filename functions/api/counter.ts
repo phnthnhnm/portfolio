@@ -24,7 +24,7 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
           'Access-Control-Allow-Origin': origin === allowedOrigin ? allowedOrigin : 'null',
         },
       });
-    } catch (err) {
+    } catch {
       return new Response(JSON.stringify({ error: 'KV read/write failed' }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' },
