@@ -1,6 +1,6 @@
 ---
 title: "Portfolio Website"
-description: "This website — a static portfolio built with Astro, Tailwind CSS, and Preact. Features an interactive terminal emulator, zoomable Mermaid diagrams, and a floating table of contents, all deployed on Cloudflare Pages."
+description: "This website — a static portfolio built with Astro, Tailwind CSS, and Preact. Features zoomable Mermaid diagrams and a floating table of contents, all deployed on Cloudflare Pages."
 techStack:
   - "Astro"
   - "Tailwind CSS v4"
@@ -15,7 +15,7 @@ order: 2
 
 You're looking at it. I built this site from scratch to pair with my resume. The goal was a fast, single-page portfolio that doesn't look like a template and has a few touches that make it feel alive.
 
-I went with Astro because it ships zero JavaScript by default. Every component on this page is static HTML and CSS unless I explicitly mark it as an interactive island. The terminal widget is the only thing that loads client-side JS — a tree-shaken Preact component under 200 lines of TSX. The Mermaid diagram viewer inlines its SVG at build time and only pulls Mermaid from CDN when a diagram is actually on the page.
+I went with Astro because it ships zero JavaScript by default. Every component on this page is static HTML and CSS unless I explicitly mark it as an interactive island. The Mermaid diagram viewer inlines its SVG at build time and only pulls Mermaid from CDN when a diagram is actually on the page.
 
 ---
 
@@ -27,8 +27,7 @@ The site is mostly static. Astro builds everything to flat HTML, CSS, and JS at 
 
 - **Astro 6** handles routing, content collections, and the build pipeline. Project detail pages use `getStaticPaths` so each project gets its own URL without client-side routing.
 - **Tailwind CSS v4** with the Typography plugin handles all styling. The dark theme uses CSS custom properties in a `@theme` block — there's no `tailwind.config.js`.
-- **Preact** powers the interactive terminal. Preact is about 3KB instead of React's 40KB.
-- **TypeScript** for the Astro config, content schemas, terminal component, and validation logic.
+- **TypeScript** for the Astro config, content schemas, and validation logic.
 - **Cloudflare Pages** handles deployment, the contact API (`functions/api/contact.ts`), and the counter API (`functions/api/counter.ts`). I connected the GitHub repo and Cloudflare auto-detects Astro, runs `pnpm build`, and deploys the `dist/` folder.
 - **Resend** sends contact form emails. The API key lives in a Cloudflare secret, not in the repo.
 - **Turnstile** sits on the contact form to keep bots out. The siteverify runs on a separate Cloudflare Worker.
@@ -52,7 +51,6 @@ portfolio/
 │   │   ├── Experience.astro          # Vertical timeline
 │   │   ├── Skills.astro              # Categorized tech tag grid
 │   │   ├── Contact.astro             # Contact form (Turnstile + Resend API)
-│   │   ├── Terminal.island.tsx       # Preact island: interactive terminal
 │   │   ├── BackgroundBlobs.astro     # Animated floating gradient orbs
 │   │   ├── Header.astro              # Fixed nav bar with mobile menu
 │   │   ├── Footer.astro              # Site footer
@@ -65,7 +63,6 @@ portfolio/
 │   │   ├── content.config.ts         # Zod schemas for project frontmatter
 │   │   └── projects/                 # Markdown files (this page lives here)
 │   ├── lib/
-│   │   ├── terminal/fs.ts            # Virtual filesystem for the terminal
 │   │   └── contact-validation.ts     # Zod schema for contact form input
 │   ├── styles/global.css             # Tailwind directives + custom theme
 │   └── utils/
@@ -112,14 +109,6 @@ const projects = defineCollection({
 
 Astro 6's content layer uses a `loader` pattern instead of the old `src/content/config.ts` approach — you point `glob()` at a directory and it pulls in every matching file. The detail pages still use `getStaticPaths` to generate one HTML file per project at build time.
 
-### Interactive terminal
-
-The floating terminal in the bottom-right corner is a Preact island. It loads about 6KB of JS (gzipped to 2.5KB) and only when the page finishes rendering.
-
-I built a command registry that maps user input to output strings, plus a virtual filesystem so you can `cd` into project directories, `ls` their contents, and `cat` individual files. It supports tab completion for both commands and file paths, command history with up/down arrows, and a few built-in commands: `whoami`, `ls`, `cat`, `cd`, `pwd`, `contact`, `clear`, `help`, and `exit`.
-
-The terminal state (open/closed/minimized/fullscreen, input, output history) is managed with Preact hooks. The blinking cursor is a CSS animation. The whole thing is under 200 lines of TSX plus a 100-line virtual filesystem module.
-
 ### Contact form with Turnstile and Resend
 
 The contact form does a Turnstile verification first (client-side widget → siteverify Worker → back token), then posts to `functions/api/contact.ts`. The function validates the payload with a Zod schema, builds a plain-text email, and sends it through Resend's API. Validation runs on both client and server so bad input never reaches the email provider.
@@ -151,7 +140,6 @@ Three large gradient orbs drift slowly behind all sections using CSS `@keyframes
 | Decision                                                      | Reasoning                                                                                                                                                                                                                                       |
 | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Astro over Next.js or pure React**                          | This site has one interactive widget. Shipping a full SPA framework for 99% static content made no sense. Astro's island model means I only pay for the JS I actually need                                                                      |
-| **Preact over React**                                         | The terminal is simple enough that I don't need React's ecosystem. Preact is 3KB                                                                                                                                                                |
 | **Tailwind v4 over CSS modules**                              | v4's CSS-first config (`@theme` blocks, `@plugin` directives) eliminated `tailwind.config.js` entirely. Utility classes colocate styles with markup                                                                                             |
 | **Content Collections over a CMS**                            | No database, no admin panel, no API. Markdown in the repo means version control, easy editing, and zero hosting cost                                                                                                                            |
 | **Cloudflare Pages over Vercel/Netlify**                      | I was already using Cloudflare for DNS. Pages has the same free tier, auto-deploys from GitHub, and the Functions + KV combo handles the few dynamic bits (contact form, counter) without a separate backend                                    |

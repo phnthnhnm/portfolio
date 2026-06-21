@@ -40,13 +40,12 @@ const { title, description, sourceFile } = Astro.props;
 
     <button
       id="scroll-top-btn"
-      class="pointer-events-none fixed left-1/2 top-0 z-50 -translate-x-1/2 -translate-y-full rounded-b-md border border-t-0 border-slate-800 bg-slate-900/90 px-4 py-3 text-sm text-slate-400 opacity-0 shadow-md backdrop-blur transition-all duration-300 hover:text-slate-200 hover:border-slate-700 md:px-3 md:py-1 md:text-[11px] md:leading-none"
+      class="pointer-events-none fixed right-5 bottom-20 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-slate-900/90 text-slate-400 opacity-0 shadow-lg backdrop-blur transition-all duration-300 hover:border-slate-600 hover:text-slate-200 hover:bg-slate-800"
       aria-label="Scroll to top"
     >
-      <svg class="mr-1 inline-block h-3 w-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
         <path d="m18 15-6-6-6 6" />
       </svg>
-      Back to top
     </button>
 
     <script is:inline>
@@ -54,8 +53,6 @@ const { title, description, sourceFile } = Astro.props;
       if (scrollBtn) {
         window.addEventListener("scroll", () => {
           const show = window.scrollY > 500;
-          scrollBtn.classList.toggle("-translate-y-full", !show);
-          scrollBtn.classList.toggle("translate-y-0", show);
           scrollBtn.classList.toggle("opacity-0", !show);
           scrollBtn.classList.toggle("opacity-100", show);
           scrollBtn.classList.toggle("pointer-events-none", !show);

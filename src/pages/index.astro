@@ -1,21 +1,11 @@
 ---
-import { getCollection } from "astro:content";
-import BaseLayout from "@layouts/BaseLayout.astro";
-import Hero from "@components/Hero.astro";
 import About from "@components/About.astro";
-import Projects from "@components/Projects.astro";
-import Experience from "@components/Experience.astro";
-import Skills from "@components/Skills.astro";
 import Contact from "@components/Contact.astro";
-import Terminal from "@components/Terminal.island.tsx";
-
-const allProjects = await getCollection("projects");
-const terminalProjects = allProjects.map((p) => ({
-  id: p.id,
-  title: p.data.title,
-  description: p.data.description,
-  techStack: p.data.techStack,
-}));
+import Experience from "@components/Experience.astro";
+import Hero from "@components/Hero.astro";
+import Projects from "@components/Projects.astro";
+import Skills from "@components/Skills.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
 ---
 
 <BaseLayout sourceFile="src/pages/index.astro">
@@ -25,5 +15,4 @@ const terminalProjects = allProjects.map((p) => ({
   <Experience />
   <Skills />
   <Contact />
-  <Terminal client:only="preact" projects={terminalProjects} />
 </BaseLayout>

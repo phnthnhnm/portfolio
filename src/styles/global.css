@@ -40,20 +40,6 @@
     background: var(--color-text-muted);
   }
 
-  [data-terminal-scroll]::-webkit-scrollbar-track {
-    background: #0f172a;
-  }
-  [data-terminal-scroll]::-webkit-scrollbar-thumb {
-    background: #4338ca;
-  }
-  [data-terminal-scroll]::-webkit-scrollbar-thumb:hover {
-    background: #6366f1;
-  }
-
-  [data-terminal-scroll] {
-    scrollbar-color: #4338ca #0f172a;
-    scrollbar-width: thin;
-  }
 }
 
 @layer components {
