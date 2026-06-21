@@ -38,30 +38,81 @@ const { title, description, sourceFile } = Astro.props;
       <StatusLink />
     </div>
 
-    <button
-      id="scroll-top-btn"
-      class="pointer-events-none fixed right-5 bottom-20 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-slate-900/90 text-slate-400 opacity-0 shadow-lg backdrop-blur transition-all duration-300 hover:border-slate-600 hover:text-slate-200 hover:bg-slate-800"
-      aria-label="Scroll to top"
+    <div
+      id="scroll-top-container"
+      class="pointer-events-none fixed right-4 bottom-6 z-40 flex h-12 w-12 items-center justify-center opacity-0 transition-opacity duration-300"
     >
-      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-        <path d="m18 15-6-6-6 6" />
+      <svg class="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 48 48" aria-hidden="true">
+        <circle cx="24" cy="24" r="22" fill="none" stroke="currentColor" stroke-width="2.5" class="text-slate-700/30" />
+        <circle
+          id="scroll-progress-ring"
+          cx="24" cy="24" r="22"
+          fill="none"
+          stroke="var(--color-accent)"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-dasharray="138.23"
+          stroke-dashoffset="138.23"
+        />
       </svg>
-    </button>
+      <button
+        id="scroll-top-btn"
+        class="pointer-events-auto relative flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-slate-900/90 text-slate-400 shadow-lg backdrop-blur transition-all duration-300 hover:border-slate-600 hover:text-slate-200 hover:bg-slate-800"
+        aria-label="Scroll to top"
+      >
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m18 15-6-6-6 6" />
+        </svg>
+      </button>
+    </div>
 
     <script is:inline>
-      const scrollBtn = document.getElementById("scroll-top-btn");
-      if (scrollBtn) {
-        window.addEventListener("scroll", () => {
+      (function () {
+        const container = document.getElementById("scroll-top-container");
+        const btn = document.getElementById("scroll-top-btn");
+        const ring = document.getElementById("scroll-progress-ring");
+        if (!container || !btn) return;
+
+        const CIRCUMFERENCE = 138.23;
+
+        function toggleVisibility() {
           const show = window.scrollY > 500;
-          scrollBtn.classList.toggle("opacity-0", !show);
-          scrollBtn.classList.toggle("opacity-100", show);
-          scrollBtn.classList.toggle("pointer-events-none", !show);
-          scrollBtn.classList.toggle("pointer-events-auto", show);
-        });
-        scrollBtn.addEventListener("click", () => {
+          container.classList.toggle("opacity-0", !show);
+          container.classList.toggle("opacity-100", show);
+          container.classList.toggle("pointer-events-none", !show);
+          container.classList.toggle("pointer-events-auto", show);
+        }
+
+        function updateProgress() {
+          if (!ring) return;
+          const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+          if (scrollHeight <= 0) {
+            ring.style.strokeDashoffset = String(CIRCUMFERENCE);
+            return;
+          }
+          const progress = Math.min(window.scrollY / scrollHeight, 1);
+          ring.style.strokeDashoffset = String(CIRCUMFERENCE * (1 - progress));
+        }
+
+        let ticking = false;
+        window.addEventListener("scroll", () => {
+          if (!ticking) {
+            requestAnimationFrame(() => {
+              toggleVisibility();
+              updateProgress();
+              ticking = false;
+            });
+            ticking = true;
+          }
+        }, { passive: true });
+
+        toggleVisibility();
+        updateProgress();
+
+        btn.addEventListener("click", () => {
           window.scrollTo({ top: 0, behavior: "smooth" });
         });
-      }
+      })();
     </script>
   </body>
 </html>
