@@ -2,12 +2,12 @@ import { validateContact } from "../../src/lib/contact-validation";
 
 interface Env {
   RESEND_API_KEY: string;
+  TO_EMAIL: string;
 }
 
 const RESEND_API_URL = "https://api.resend.com/emails";
 
 const FROM_EMAIL = "contact@phanthanhnam.com";
-const TO_EMAIL = "namthanh.phan@proton.me";
 
 export const onRequestPost = async ({ request, env }: { request: Request; env: Env }) => {
   // Parse and validate body
@@ -43,7 +43,7 @@ export const onRequestPost = async ({ request, env }: { request: Request; env: E
       },
       body: JSON.stringify({
         from: FROM_EMAIL,
-        to: TO_EMAIL,
+        to: env.TO_EMAIL,
         subject: emailSubject,
         reply_to: email.trim(),
         text: `Name: ${name.trim()}\nEmail: ${email.trim()}${subject ? `\nSubject: ${subject}` : ""}\n\nMessage:\n${message.trim()}`,

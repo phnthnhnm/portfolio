@@ -73,9 +73,9 @@ Type 'cd projects/' and 'ls' to browse my work.`,
 
     this.add(
       "contact.txt",
-      `Email:    namthanh.phan@proton.me
-GitHub:   github.com/phnthnhnm
-LinkedIn: linkedin.com/in/phan-thanh-nam`,
+      `GitHub:   github.com/phnthnhnm
+LinkedIn: linkedin.com/in/phan-thanh-nam
+Website:  phanthanhnam.com#contact`,
     );
 
     // Auto-generate project files from content collection
