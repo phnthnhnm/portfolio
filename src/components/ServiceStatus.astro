@@ -66,9 +66,9 @@
       {
         id: "resume",
         name: "Resume",
-        url: "https://rxresu.me",
+        url: "/api/health/resume",
         description: "Public resume hosted on Reactive Resume",
-        cors: "no-cors",
+        proxy: true,
       },
     ];
 
@@ -123,9 +123,22 @@
         } else {
           init.method = svc.method || "GET";
         }
-        await fetch(svc.url, init);
+        var response = await fetch(svc.url, init);
         var latency = performance.now() - start;
         clearTimeout(timeout);
+
+        if (svc.proxy) {
+          var data = await response.json();
+          return {
+            id: svc.id,
+            name: data.name || svc.name,
+            url: data.url || svc.url,
+            status: data.status,
+            latency: data.latency,
+            error: data.error,
+          };
+        }
+
         return {
           id: svc.id,
           name: svc.name,
