@@ -1,18 +1,18 @@
 ---
-title: "iRAS-RAG"
-description: "My graduation thesis — an intelligent aquaculture advisory platform combining IoT telemetry with a RAG-powered AI assistant. I led a team of 4, built ~40% of the backend, designed the project architecture, and set up the MQTT broker and cloud infrastructure."
+title: 'iRAS-RAG'
+description: 'My graduation thesis — an intelligent aquaculture advisory platform combining IoT telemetry with a RAG-powered AI assistant. I led a team of 4, built ~40% of the backend, designed the project architecture, and set up the MQTT broker and cloud infrastructure.'
 techStack:
-  - ".NET 8"
-  - "PostgreSQL / TimescaleDB"
-  - "Redis"
-  - "Python / FastAPI"
-  - "RAG"
-  - "PhoBERT"
-  - "MQTT"
-  - "Docker"
-  - "Clean Architecture"
-  - "Entity Framework Core"
-githubUrl: "https://github.com/iRAS-RAG/webapi-backend"
+  - '.NET 8'
+  - 'PostgreSQL / TimescaleDB'
+  - 'Redis'
+  - 'Python / FastAPI'
+  - 'RAG'
+  - 'PhoBERT'
+  - 'MQTT'
+  - 'Docker'
+  - 'Clean Architecture'
+  - 'Entity Framework Core'
+githubUrl: 'https://github.com/iRAS-RAG/webapi-backend'
 featured: true
 order: 1
 ---
@@ -128,7 +128,7 @@ The LLM layer is intentionally lightweight. It's an `httpx` client that posts to
 
 ### Hybrid Intent Classification
 
-Before a question hits the LLM, the system needs to know what *kind* of question it is. My team built a two-tier classifier that I designed the architecture for:
+Before a question hits the LLM, the system needs to know what _kind_ of question it is. My team built a two-tier classifier that I designed the architecture for:
 
 **Tier 1 — Rule-based:** Regex and keyword matching catches straightforward patterns. _"Bể t1 hôm nay pH bao nhiêu?"_ maps to `farm_status`. _"SOP xử lý pH cao?"_ maps to `knowledge`. Runs in under 1ms with no API cost.
 
@@ -144,14 +144,14 @@ When a farmer asks about something not covered by the uploaded SOPs, the system 
 
 ## Key decisions I'd defend
 
-| Decision | Why |
-|---|---|
-| **Clean Architecture** | At thesis scale it seemed like overkill, but it meant I could swap from in-memory caching to Redis, or from raw SQL to EF Core, without touching a line of domain logic |
-| **Ardalis.Specification over raw repositories** | One `IRepository<T>` instead of 30 `I*Repository` interfaces. Type-safe query composition without the explosion |
-| **TimescaleDB hypertables** | Sensor data grows fast (1 reading/sec × 5 pins × N devices). Timescale auto-partitions by time, so queries stay fast without manual sharding |
-| **Redis Streams over RabbitMQ** | We already had Redis for caching and chat history. Using it as a message queue too meant one less service to manage in Docker Compose |
-| **No LangChain** | For a thesis project, the abstractions added more complexity than they removed. An `httpx` client posting to an OpenAI-compatible endpoint is about 50 lines we could fully debug |
-| **Hybrid intent routing (rules + PhoBERT)** | Pure ML is slow and expensive for simple queries. Rules catch 80% of cases in <1ms. The model handles the ambiguous 20% |
+| Decision                                        | Why                                                                                                                                                                               |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Clean Architecture**                          | At thesis scale it seemed like overkill, but it meant I could swap from in-memory caching to Redis, or from raw SQL to EF Core, without touching a line of domain logic           |
+| **Ardalis.Specification over raw repositories** | One `IRepository<T>` instead of 30 `I*Repository` interfaces. Type-safe query composition without the explosion                                                                   |
+| **TimescaleDB hypertables**                     | Sensor data grows fast (1 reading/sec × 5 pins × N devices). Timescale auto-partitions by time, so queries stay fast without manual sharding                                      |
+| **Redis Streams over RabbitMQ**                 | We already had Redis for caching and chat history. Using it as a message queue too meant one less service to manage in Docker Compose                                             |
+| **No LangChain**                                | For a thesis project, the abstractions added more complexity than they removed. An `httpx` client posting to an OpenAI-compatible endpoint is about 50 lines we could fully debug |
+| **Hybrid intent routing (rules + PhoBERT)**     | Pure ML is slow and expensive for simple queries. Rules catch 80% of cases in <1ms. The model handles the ambiguous 20%                                                           |
 
 ---
 

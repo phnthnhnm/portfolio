@@ -1,14 +1,14 @@
 ---
-title: "Portfolio Website"
-description: "This website — a static portfolio built with Astro, Tailwind CSS, and Preact. Features zoomable Mermaid diagrams and a floating table of contents, all deployed on Cloudflare Pages."
+title: 'Portfolio Website'
+description: 'This website — a static portfolio built with Astro, Tailwind CSS, and Preact. Features zoomable Mermaid diagrams and a floating table of contents, all deployed on Cloudflare Pages.'
 techStack:
-  - "Astro"
-  - "Tailwind CSS v4"
-  - "TypeScript"
-  - "Preact"
-  - "Cloudflare Pages"
-  - "Mermaid"
-githubUrl: "https://github.com/phnthnhnm/portfolio"
+  - 'Astro'
+  - 'Tailwind CSS v4'
+  - 'TypeScript'
+  - 'Preact'
+  - 'Cloudflare Pages'
+  - 'Mermaid'
+githubUrl: 'https://github.com/phnthnhnm/portfolio'
 featured: true
 order: 2
 ---
@@ -93,7 +93,7 @@ Each project on the homepage is a Markdown file in `src/content/projects/`. Astr
 ```typescript
 // src/content.config.ts
 const projects = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./src/content/projects" }),
+  loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
@@ -137,16 +137,16 @@ Three large gradient orbs drift slowly behind all sections using CSS `@keyframes
 
 ## Design decisions
 
-| Decision                                                      | Reasoning                                                                                                                                                                                                                                       |
-| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Astro over Next.js or pure React**                          | This site has one interactive widget. Shipping a full SPA framework for 99% static content made no sense. Astro's island model means I only pay for the JS I actually need                                                                      |
-| **Tailwind v4 over CSS modules**                              | v4's CSS-first config (`@theme` blocks, `@plugin` directives) eliminated `tailwind.config.js` entirely. Utility classes colocate styles with markup                                                                                             |
-| **Content Collections over a CMS**                            | No database, no admin panel, no API. Markdown in the repo means version control, easy editing, and zero hosting cost                                                                                                                            |
-| **Cloudflare Pages over Vercel/Netlify**                      | I was already using Cloudflare for DNS. Pages has the same free tier, auto-deploys from GitHub, and the Functions + KV combo handles the few dynamic bits (contact form, counter) without a separate backend                                    |
-| **Resend over SendGrid/Mailgun**                              | Cleaner API, simpler DX, and the free tier covers portfolio contact volume easily                                                                                                                                                               |
-| **Custom remark plugin over an existing Mermaid integration** | Existing Astro Mermaid integrations either didn't support v11, required build-time rendering (heavy), or used outdated CDN URLs. A 20-line remark plugin and a separate client script gave me exact control over when and how Mermaid loads      |
-| **Cloudflare Functions over a separate backend**              | The contact form and counter are the only dynamic needs. Two 30-line Functions with KV is simpler than spinning up a separate service                                                                                                           |
-| **Turnstile over reCAPTCHA**                                  | Less invasive UX (no image grid challenges), no Google dependency, and native Cloudflare integration                                                                                                                                             |
+| Decision                                                      | Reasoning                                                                                                                                                                                                                                   |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Astro over Next.js or pure React**                          | This site has one interactive widget. Shipping a full SPA framework for 99% static content made no sense. Astro's island model means I only pay for the JS I actually need                                                                  |
+| **Tailwind v4 over CSS modules**                              | v4's CSS-first config (`@theme` blocks, `@plugin` directives) eliminated `tailwind.config.js` entirely. Utility classes colocate styles with markup                                                                                         |
+| **Content Collections over a CMS**                            | No database, no admin panel, no API. Markdown in the repo means version control, easy editing, and zero hosting cost                                                                                                                        |
+| **Cloudflare Pages over Vercel/Netlify**                      | I was already using Cloudflare for DNS. Pages has the same free tier, auto-deploys from GitHub, and the Functions + KV combo handles the few dynamic bits (contact form, counter) without a separate backend                                |
+| **Resend over SendGrid/Mailgun**                              | Cleaner API, simpler DX, and the free tier covers portfolio contact volume easily                                                                                                                                                           |
+| **Custom remark plugin over an existing Mermaid integration** | Existing Astro Mermaid integrations either didn't support v11, required build-time rendering (heavy), or used outdated CDN URLs. A 20-line remark plugin and a separate client script gave me exact control over when and how Mermaid loads |
+| **Cloudflare Functions over a separate backend**              | The contact form and counter are the only dynamic needs. Two 30-line Functions with KV is simpler than spinning up a separate service                                                                                                       |
+| **Turnstile over reCAPTCHA**                                  | Less invasive UX (no image grid challenges), no Google dependency, and native Cloudflare integration                                                                                                                                        |
 
 ---
 

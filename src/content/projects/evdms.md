@@ -1,16 +1,16 @@
 ---
-title: "EVDMS"
-description: "My 2nd year team project — a dealer management system for electric vehicles. I led a team of 5, designed the database schema and backend architecture, and enforced PR reviews and CI pipeline discipline."
+title: 'EVDMS'
+description: 'My 2nd year team project — a dealer management system for electric vehicles. I led a team of 5, designed the database schema and backend architecture, and enforced PR reviews and CI pipeline discipline.'
 techStack:
-  - ".NET 8"
-  - "PostgreSQL"
-  - "Entity Framework Core"
-  - "JWT Auth"
-  - "xUnit"
-  - "Testcontainers"
-  - "Microsoft.ML"
-  - "Docker"
-githubUrl: "https://github.com/FA25-SWP391-SE1839-Group5/evdms-be"
+  - '.NET 8'
+  - 'PostgreSQL'
+  - 'Entity Framework Core'
+  - 'JWT Auth'
+  - 'xUnit'
+  - 'Testcontainers'
+  - 'Microsoft.ML'
+  - 'Docker'
+githubUrl: 'https://github.com/FA25-SWP391-SE1839-Group5/evdms-be'
 featured: true
 order: 3
 ---

@@ -1,15 +1,15 @@
 ---
-title: "Comic Optimizer"
-description: "A Flutter desktop app for batch-optimizing comic book archives (CBZ/CBR/ZIP) by compressing images to JPEG XL using the cjxl encoder, with pause/resume, safe-run mode, and post-run system actions."
+title: 'Comic Optimizer'
+description: 'A Flutter desktop app for batch-optimizing comic book archives (CBZ/CBR/ZIP) by compressing images to JPEG XL using the cjxl encoder, with pause/resume, safe-run mode, and post-run system actions.'
 techStack:
-  - "Flutter"
-  - "Dart"
-  - "Provider"
-  - "cjxl (JPEG XL)"
-  - "dwebp"
-  - "ImageMagick"
-  - "SharedPreferences"
-githubUrl: "https://github.com/phnthnhnm/comic_optimizer"
+  - 'Flutter'
+  - 'Dart'
+  - 'Provider'
+  - 'cjxl (JPEG XL)'
+  - 'dwebp'
+  - 'ImageMagick'
+  - 'SharedPreferences'
+githubUrl: 'https://github.com/phnthnhnm/comic_optimizer'
 featured: false
 order: 5
 ---
@@ -41,11 +41,11 @@ Pick a root folder, pick a preset, hit Start. The app walks every subdirectory l
 
 Three built-in presets control the `cjxl` quality/size tradeoff:
 
-| Preset | Args | Use case |
-|---|---|---|
-| Lossless | `--distance=0 --lossless_jpeg=1` | Archive preservation, zero quality loss |
-| Visually Lossless | `--distance=1.0` | Nearly identical quality, noticeable size reduction |
-| Lossy | `--distance=3.0` | Aggressive compression, smallest files |
+| Preset            | Args                             | Use case                                            |
+| ----------------- | -------------------------------- | --------------------------------------------------- |
+| Lossless          | `--distance=0 --lossless_jpeg=1` | Archive preservation, zero quality loss             |
+| Visually Lossless | `--distance=1.0`                 | Nearly identical quality, noticeable size reduction |
+| Lossy             | `--distance=3.0`                 | Aggressive compression, smallest files              |
 
 ---
 
@@ -87,15 +87,15 @@ The encoder has a fallback chain for each image:
 
 ## Design decisions
 
-| Decision | Why |
-|---|---|
-| **Safe-run copies before touching files** | First rule of a tool that deletes things: never delete originals unless the user explicitly opts in |
-| **WEBP to PNG conversion** | `cjxl` doesn't support WEBP input. `dwebp` handles this cleanly with no quality loss since it's a lossless conversion to PNG |
-| **ImageMagick resave on cjxl exit 1** | Some PNGs have metadata or color profiles that `cjxl` chokes on. `magick -strip` normalizes them without visible quality change |
-| **Revert larger jxl files** | Compression isn't guaranteed. If the output is bigger, the original was already well compressed and we should keep it |
-| **ZIP store (level 0)** | CBZ files are already compressed images inside. Re-compressing the ZIP would waste CPU for zero size savings |
-| **Recycle Bin by default** | Permanent delete is scary. The option exists for SSDs with limited space, but the default puts files in the bin so you can recover mistakes |
-| **Post-run system actions** | Batch processing 50+ folders takes hours. Being able to walk away and have the PC shut down when it's done is the whole point |
+| Decision                                  | Why                                                                                                                                         |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Safe-run copies before touching files** | First rule of a tool that deletes things: never delete originals unless the user explicitly opts in                                         |
+| **WEBP to PNG conversion**                | `cjxl` doesn't support WEBP input. `dwebp` handles this cleanly with no quality loss since it's a lossless conversion to PNG                |
+| **ImageMagick resave on cjxl exit 1**     | Some PNGs have metadata or color profiles that `cjxl` chokes on. `magick -strip` normalizes them without visible quality change             |
+| **Revert larger jxl files**               | Compression isn't guaranteed. If the output is bigger, the original was already well compressed and we should keep it                       |
+| **ZIP store (level 0)**                   | CBZ files are already compressed images inside. Re-compressing the ZIP would waste CPU for zero size savings                                |
+| **Recycle Bin by default**                | Permanent delete is scary. The option exists for SSDs with limited space, but the default puts files in the bin so you can recover mistakes |
+| **Post-run system actions**               | Batch processing 50+ folders takes hours. Being able to walk away and have the PC shut down when it's done is the whole point               |
 
 ---
 

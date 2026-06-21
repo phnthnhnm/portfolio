@@ -1,129 +1,129 @@
-import { describe, expect, it } from "vitest";
-import { validateContact } from "../contact-validation";
+import { describe, expect, it } from 'vitest';
+import { validateContact } from '../contact-validation';
 
-describe("validateContact", () => {
-  it("returns valid for correct input", () => {
+describe('validateContact', () => {
+  it('returns valid for correct input', () => {
     const result = validateContact({
-      name: "John Doe",
-      email: "john@example.com",
-      message: "Hello, I have a question about your work.",
+      name: 'John Doe',
+      email: 'john@example.com',
+      message: 'Hello, I have a question about your work.',
     });
     expect(result.valid).toBe(true);
     if (result.valid) {
-      expect(result.data.name).toBe("John Doe");
-      expect(result.data.email).toBe("john@example.com");
+      expect(result.data.name).toBe('John Doe');
+      expect(result.data.email).toBe('john@example.com');
     }
   });
 
-  it("trims whitespace from fields", () => {
+  it('trims whitespace from fields', () => {
     const result = validateContact({
-      name: "  John  ",
-      email: "john@example.com",
-      message: "  Hello world, this is a test message.  ",
+      name: '  John  ',
+      email: 'john@example.com',
+      message: '  Hello world, this is a test message.  ',
     });
     expect(result.valid).toBe(true);
     if (result.valid) {
-      expect(result.data.name).toBe("John");
-      expect(result.data.message).toBe("Hello world, this is a test message.");
+      expect(result.data.name).toBe('John');
+      expect(result.data.message).toBe('Hello world, this is a test message.');
     }
   });
 
-  describe("name validation", () => {
-    it("rejects missing name", () => {
+  describe('name validation', () => {
+    it('rejects missing name', () => {
       const result = validateContact({
-        email: "a@b.com",
-        message: "Hello world, testing testing",
+        email: 'a@b.com',
+        message: 'Hello world, testing testing',
       });
       expect(result.valid).toBe(false);
       if (!result.valid) {
-        expect(result.errors).toContain("Name is required.");
+        expect(result.errors).toContain('Name is required.');
       }
     });
 
-    it("rejects empty name", () => {
+    it('rejects empty name', () => {
       const result = validateContact({
-        name: "   ",
-        email: "a@b.com",
-        message: "Hello world, testing testing",
+        name: '   ',
+        email: 'a@b.com',
+        message: 'Hello world, testing testing',
       });
       expect(result.valid).toBe(false);
       if (!result.valid) {
-        expect(result.errors).toContain("Name is required.");
+        expect(result.errors).toContain('Name is required.');
       }
     });
 
-    it("rejects name over 100 chars", () => {
+    it('rejects name over 100 chars', () => {
       const result = validateContact({
-        name: "x".repeat(101),
-        email: "a@b.com",
-        message: "Hello world, testing testing",
+        name: 'x'.repeat(101),
+        email: 'a@b.com',
+        message: 'Hello world, testing testing',
       });
       expect(result.valid).toBe(false);
       if (!result.valid) {
-        expect(result.errors).toContain("Name must be under 100 characters.");
+        expect(result.errors).toContain('Name must be under 100 characters.');
       }
     });
 
-    it("accepts name exactly 100 chars", () => {
+    it('accepts name exactly 100 chars', () => {
       const result = validateContact({
-        name: "x".repeat(100),
-        email: "a@b.com",
-        message: "Hello world, testing testing",
+        name: 'x'.repeat(100),
+        email: 'a@b.com',
+        message: 'Hello world, testing testing',
       });
       expect(result.valid).toBe(true);
     });
   });
 
-  describe("email validation", () => {
-    it("rejects missing email", () => {
+  describe('email validation', () => {
+    it('rejects missing email', () => {
       const result = validateContact({
-        name: "John",
-        message: "Hello world, testing testing",
+        name: 'John',
+        message: 'Hello world, testing testing',
       });
       expect(result.valid).toBe(false);
       if (!result.valid) {
-        expect(result.errors).toContain("A valid email is required.");
+        expect(result.errors).toContain('A valid email is required.');
       }
     });
 
-    it("rejects invalid email format", () => {
+    it('rejects invalid email format', () => {
       const result = validateContact({
-        name: "John",
-        email: "not-an-email",
-        message: "Hello world, testing testing",
+        name: 'John',
+        email: 'not-an-email',
+        message: 'Hello world, testing testing',
       });
       expect(result.valid).toBe(false);
       if (!result.valid) {
-        expect(result.errors).toContain("A valid email is required.");
+        expect(result.errors).toContain('A valid email is required.');
       }
     });
 
-    it("accepts emails with subdomains and plus signs", () => {
+    it('accepts emails with subdomains and plus signs', () => {
       const result = validateContact({
-        name: "John",
-        email: "user+tag@sub.example.co.uk",
-        message: "Hello world, testing testing",
+        name: 'John',
+        email: 'user+tag@sub.example.co.uk',
+        message: 'Hello world, testing testing',
       });
       expect(result.valid).toBe(true);
     });
   });
 
-  describe("subject validation", () => {
-    it("accepts missing subject (optional field)", () => {
+  describe('subject validation', () => {
+    it('accepts missing subject (optional field)', () => {
       const result = validateContact({
-        name: "John",
-        email: "a@b.com",
-        message: "Hello world, testing testing",
+        name: 'John',
+        email: 'a@b.com',
+        message: 'Hello world, testing testing',
       });
       expect(result.valid).toBe(true);
     });
 
-    it("accepts empty subject as missing", () => {
+    it('accepts empty subject as missing', () => {
       const result = validateContact({
-        name: "John",
-        email: "a@b.com",
-        subject: "   ",
-        message: "Hello world, testing testing",
+        name: 'John',
+        email: 'a@b.com',
+        subject: '   ',
+        message: 'Hello world, testing testing',
       });
       expect(result.valid).toBe(true);
       if (result.valid) {
@@ -131,124 +131,124 @@ describe("validateContact", () => {
       }
     });
 
-    it("trims whitespace from subject", () => {
+    it('trims whitespace from subject', () => {
       const result = validateContact({
-        name: "John",
-        email: "a@b.com",
-        subject: "  Collaboration Opportunity  ",
-        message: "Hello world, testing testing",
+        name: 'John',
+        email: 'a@b.com',
+        subject: '  Collaboration Opportunity  ',
+        message: 'Hello world, testing testing',
       });
       expect(result.valid).toBe(true);
       if (result.valid) {
-        expect(result.data.subject).toBe("Collaboration Opportunity");
+        expect(result.data.subject).toBe('Collaboration Opportunity');
       }
     });
 
-    it("rejects subject over 200 chars", () => {
+    it('rejects subject over 200 chars', () => {
       const result = validateContact({
-        name: "John",
-        email: "a@b.com",
-        subject: "x".repeat(201),
-        message: "Hello world, testing testing",
+        name: 'John',
+        email: 'a@b.com',
+        subject: 'x'.repeat(201),
+        message: 'Hello world, testing testing',
       });
       expect(result.valid).toBe(false);
       if (!result.valid) {
-        expect(result.errors).toContain("Subject must be under 200 characters.");
+        expect(result.errors).toContain('Subject must be under 200 characters.');
       }
     });
 
-    it("accepts subject exactly 200 chars", () => {
+    it('accepts subject exactly 200 chars', () => {
       const result = validateContact({
-        name: "John",
-        email: "a@b.com",
-        subject: "x".repeat(200),
-        message: "Hello world, testing testing",
+        name: 'John',
+        email: 'a@b.com',
+        subject: 'x'.repeat(200),
+        message: 'Hello world, testing testing',
       });
       expect(result.valid).toBe(true);
     });
 
-    it("rejects subject that is not a string", () => {
+    it('rejects subject that is not a string', () => {
       const result = validateContact({
-        name: "John",
-        email: "a@b.com",
+        name: 'John',
+        email: 'a@b.com',
         subject: 12345,
-        message: "Hello world, testing testing",
+        message: 'Hello world, testing testing',
       });
       expect(result.valid).toBe(false);
       if (!result.valid) {
-        expect(result.errors).toContain("Subject must be a string.");
+        expect(result.errors).toContain('Subject must be a string.');
       }
     });
   });
 
-  describe("message validation", () => {
-    it("rejects missing message", () => {
+  describe('message validation', () => {
+    it('rejects missing message', () => {
       const result = validateContact({
-        name: "John",
-        email: "a@b.com",
+        name: 'John',
+        email: 'a@b.com',
       });
       expect(result.valid).toBe(false);
       if (!result.valid) {
-        expect(result.errors).toContain("Message must be at least 10 characters.");
+        expect(result.errors).toContain('Message must be at least 10 characters.');
       }
     });
 
-    it("rejects message under 10 chars", () => {
+    it('rejects message under 10 chars', () => {
       const result = validateContact({
-        name: "John",
-        email: "a@b.com",
-        message: "Short",
+        name: 'John',
+        email: 'a@b.com',
+        message: 'Short',
       });
       expect(result.valid).toBe(false);
       if (!result.valid) {
-        expect(result.errors).toContain("Message must be at least 10 characters.");
+        expect(result.errors).toContain('Message must be at least 10 characters.');
       }
     });
 
-    it("rejects message over 5000 chars", () => {
+    it('rejects message over 5000 chars', () => {
       const result = validateContact({
-        name: "John",
-        email: "a@b.com",
-        message: "x".repeat(5001),
+        name: 'John',
+        email: 'a@b.com',
+        message: 'x'.repeat(5001),
       });
       expect(result.valid).toBe(false);
       if (!result.valid) {
-        expect(result.errors).toContain("Message must be under 5,000 characters.");
+        expect(result.errors).toContain('Message must be under 5,000 characters.');
       }
     });
 
-    it("accepts message exactly 10 chars", () => {
+    it('accepts message exactly 10 chars', () => {
       const result = validateContact({
-        name: "John",
-        email: "a@b.com",
-        message: "0123456789",
+        name: 'John',
+        email: 'a@b.com',
+        message: '0123456789',
       });
       expect(result.valid).toBe(true);
     });
   });
 
-  describe("malformed input", () => {
-    it("rejects null", () => {
+  describe('malformed input', () => {
+    it('rejects null', () => {
       const result = validateContact(null);
       expect(result.valid).toBe(false);
     });
 
-    it("rejects array", () => {
-      const result = validateContact(["a", "b"]);
+    it('rejects array', () => {
+      const result = validateContact(['a', 'b']);
       expect(result.valid).toBe(false);
     });
 
-    it("rejects string", () => {
-      const result = validateContact("hello");
+    it('rejects string', () => {
+      const result = validateContact('hello');
       expect(result.valid).toBe(false);
     });
   });
 
-  it("returns multiple errors at once", () => {
+  it('returns multiple errors at once', () => {
     const result = validateContact({
-      name: "",
-      email: "bad",
-      message: "short",
+      name: '',
+      email: 'bad',
+      message: 'short',
     });
     expect(result.valid).toBe(false);
     if (!result.valid) {

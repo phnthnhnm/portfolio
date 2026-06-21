@@ -3,17 +3,17 @@
  * <pre class="mermaid"> HTML blocks, bypassing Shiki syntax highlighting
  * so Mermaid.js can render them client-side as SVG diagrams.
  */
-import type { Code, Root } from "mdast";
-import { visit } from "unist-util-visit";
+import type { Code, Root } from 'mdast';
+import { visit } from 'unist-util-visit';
 
 export function remarkMermaid() {
   return (tree: Root) => {
-    visit(tree, "code", (node: Code, index, parent) => {
-      if (node.lang !== "mermaid") return;
+    visit(tree, 'code', (node: Code, index, parent) => {
+      if (node.lang !== 'mermaid') return;
 
       // Replace the code node with a raw HTML node that Mermaid will render
       parent!.children.splice(index!, 1, {
-        type: "html",
+        type: 'html',
         value: `<pre class="mermaid">${node.value}</pre>`,
       });
     });

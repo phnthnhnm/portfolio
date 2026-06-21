@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execSync } from 'node:child_process';
 
 /**
  * Returns the ISO date string of the last commit that touched the given file.
@@ -8,10 +8,10 @@ import { execSync } from "node:child_process";
  */
 export function getGitLastModified(filePath: string): string | undefined {
   try {
-    const result = execSync(
-      `git log -1 --format=%cI -- ${filePath}`,
-      { encoding: "utf-8", stdio: ["ignore", "pipe", "ignore"] },
-    ).trim();
+    const result = execSync(`git log -1 --format=%cI -- ${filePath}`, {
+      encoding: 'utf-8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
     return result || undefined;
   } catch {
     return undefined;

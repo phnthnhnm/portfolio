@@ -9,16 +9,16 @@ interface ExperienceEntry {
 
 const experiences: ExperienceEntry[] = [
   {
-    role: "Software Engineering Intern — Backend",
-    company: "FPT Software Academy",
-    companyUrl: "https://fsoft-academy.edu.vn/",
-    period: "Aug 2024 — Nov 2024",
+    role: 'Software Engineering Intern — Backend',
+    company: 'FPT Software Academy',
+    companyUrl: 'https://fsoft-academy.edu.vn/',
+    period: 'Aug 2024 — Nov 2024',
     highlights: [
-      "Served as the primary backend feature developer on a 7-intern team building an online learning platform",
-      "Implemented REST APIs with ASP.NET and MySQL, integrated AWS S3 for file uploads",
-      "Wrote unit tests with xUnit to ensure API reliability",
-      "Collaborated in a Scrum environment with daily stand-ups, sprint planning, and retrospectives using Taiga and GitLab",
-      "Earned a Level A rating (GPA 91.0)",
+      'Served as the primary backend feature developer on a 7-intern team building an online learning platform',
+      'Implemented REST APIs with ASP.NET and MySQL, integrated AWS S3 for file uploads',
+      'Wrote unit tests with xUnit to ensure API reliability',
+      'Collaborated in a Scrum environment with daily stand-ups, sprint planning, and retrospectives using Taiga and GitLab',
+      'Earned a Level A rating (GPA 91.0)',
     ],
   },
 ];
@@ -31,38 +31,55 @@ const experiences: ExperienceEntry[] = [
 
   <div class="relative">
     <!-- Timeline line -->
-    <div class="absolute left-4 top-2 bottom-2 w-px bg-slate-800 md:left-6"></div>
+    <div class="absolute top-2 bottom-2 left-4 w-px bg-slate-800 md:left-6"></div>
 
     <div class="space-y-10">
-      {experiences.map((exp) => (
-        <div class="relative pl-12 md:pl-16">
-          <!-- Timeline dot -->
-          <div class="absolute left-2.5 top-2 h-3 w-3 rounded-full border-2 border-indigo-500 bg-slate-950 md:left-4.5"></div>
+      {
+        experiences.map((exp) => (
+          <div class="relative pl-12 md:pl-16">
+            {/* Timeline dot */}
+            <div class="absolute top-2 left-2.5 h-3 w-3 rounded-full border-2 border-indigo-500 bg-slate-950 md:left-4.5" />
 
-          <div class="card">
-            <div class="mb-1 flex flex-wrap items-center gap-2 text-sm text-slate-400">
-              <span class="font-medium text-slate-300">{exp.role}</span>
-              <span class="text-slate-600">•</span>
-              {exp.companyUrl ? (
-                <a href={exp.companyUrl} target="_blank" rel="noopener noreferrer" class="text-indigo-400 transition-colors hover:text-indigo-300">{exp.company}</a>
-              ) : (
-                <span class="text-indigo-400">{exp.company}</span>
-              )}
+            <div class="card">
+              <div class="mb-1 flex flex-wrap items-center gap-2 text-sm text-slate-400">
+                <span class="font-medium text-slate-300">{exp.role}</span>
+                <span class="text-slate-600">•</span>
+                {exp.companyUrl ? (
+                  <a
+                    href={exp.companyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-indigo-400 transition-colors hover:text-indigo-300"
+                  >
+                    {exp.company}
+                  </a>
+                ) : (
+                  <span class="text-indigo-400">{exp.company}</span>
+                )}
+              </div>
+              <p class="mb-4 font-mono text-xs text-slate-500">{exp.period}</p>
+              <ul class="space-y-2">
+                {exp.highlights.map((item) => (
+                  <li class="flex gap-2 text-sm leading-relaxed text-slate-400">
+                    <svg
+                      class="mt-1 h-3.5 w-3.5 shrink-0 text-indigo-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="2"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
-            <p class="mb-4 font-mono text-xs text-slate-500">{exp.period}</p>
-            <ul class="space-y-2">
-              {exp.highlights.map((item) => (
-                <li class="flex gap-2 text-sm leading-relaxed text-slate-400">
-                  <svg class="mt-1 h-3.5 w-3.5 shrink-0 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 6 9 17l-5-5" />
-                  </svg>
-                  {item}
-                </li>
-              ))}
-            </ul>
           </div>
-        </div>
-      ))}
+        ))
+      }
     </div>
   </div>
 </section>

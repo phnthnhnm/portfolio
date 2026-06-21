@@ -1,14 +1,14 @@
 ---
-title: "Torrent Diff Tool"
-description: "A Flutter desktop app that diffs two .torrent files and integrates with qBittorrent to selectively download only the newly added files. Built for keeping up with updated comic packs without re-downloading everything."
+title: 'Torrent Diff Tool'
+description: 'A Flutter desktop app that diffs two .torrent files and integrates with qBittorrent to selectively download only the newly added files. Built for keeping up with updated comic packs without re-downloading everything.'
 techStack:
-  - "Flutter"
-  - "Dart"
-  - "dtorrent_parser"
-  - "qBittorrent API"
-  - "SharedPreferences"
-  - "HTTP/REST"
-githubUrl: "https://github.com/phnthnhnm/tdt"
+  - 'Flutter'
+  - 'Dart'
+  - 'dtorrent_parser'
+  - 'qBittorrent API'
+  - 'SharedPreferences'
+  - 'HTTP/REST'
+githubUrl: 'https://github.com/phnthnhnm/tdt'
 featured: false
 order: 6
 ---
@@ -70,14 +70,14 @@ No state management framework. The `DiffScreen` is a single `StatefulWidget` tha
 
 The `QBittorrentService` wraps six qBittorrent endpoints:
 
-| Endpoint | Method | Used for |
-|---|---|---|
-| `/api/v2/auth/login` | POST | Username/password login, extracts session cookie |
-| `/api/v2/torrents/add` | POST (multipart) | Adds the torrent file as paused |
-| `/api/v2/torrents/info` | GET | Polls for the torrent hash after adding |
-| `/api/v2/torrents/files` | GET | Gets the file list with indices for priority targeting |
-| `/api/v2/torrents/filePrio` | POST | Sets priority 0 (skip) or 1 (download) per file |
-| `/api/v2/torrents/stop` | POST | Ensures the torrent stays paused after adding |
+| Endpoint                    | Method           | Used for                                               |
+| --------------------------- | ---------------- | ------------------------------------------------------ |
+| `/api/v2/auth/login`        | POST             | Username/password login, extracts session cookie       |
+| `/api/v2/torrents/add`      | POST (multipart) | Adds the torrent file as paused                        |
+| `/api/v2/torrents/info`     | GET              | Polls for the torrent hash after adding                |
+| `/api/v2/torrents/files`    | GET              | Gets the file list with indices for priority targeting |
+| `/api/v2/torrents/filePrio` | POST             | Sets priority 0 (skip) or 1 (download) per file        |
+| `/api/v2/torrents/stop`     | POST             | Ensures the torrent stays paused after adding          |
 
 Each method takes `(host, port, useHttps, ...)` explicitly rather than reading from a config object. This keeps the service decoupled from `SharedPreferences` and makes it testable with any connection params.
 
@@ -89,14 +89,14 @@ Torrent files store internal paths like `Comic Pack Vol 3/Chapter 01.cbz`. When 
 
 ## Design decisions
 
-| Decision | Why |
-|---|---|
-| **No state management framework** | The app has one screen with one piece of state. Provider would be overkill here |
-| **Explicit host/port/useHttps on every method** | Service methods are pure functions of their inputs. No hidden mutable state except the session cookie |
-| **Polling for torrent hash (not WebSocket)** | qBittorrent's Web API doesn't return the hash on add. Polling for 8 seconds with 1s intervals is dumb but reliable |
-| **Force-pause after add** | Some qBittorrent versions ignore the `paused` flag on `torrents/add`. Explicitly calling `stop` after adding covers this edge case |
-| **Basename matching for files** | Internal torrent paths vary between uploads. Matching by filename (ignoring directory structure) means the diff works even when the packager rearranged folders |
-| **Blacklist, not whitelist** | It's easier to exclude known junk patterns (`.nfo`, `.txt`, `cover.jpg`) than to predict what valid files will be named. The blacklist is a simple substring match on the lowered filename |
+| Decision                                        | Why                                                                                                                                                                                        |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **No state management framework**               | The app has one screen with one piece of state. Provider would be overkill here                                                                                                            |
+| **Explicit host/port/useHttps on every method** | Service methods are pure functions of their inputs. No hidden mutable state except the session cookie                                                                                      |
+| **Polling for torrent hash (not WebSocket)**    | qBittorrent's Web API doesn't return the hash on add. Polling for 8 seconds with 1s intervals is dumb but reliable                                                                         |
+| **Force-pause after add**                       | Some qBittorrent versions ignore the `paused` flag on `torrents/add`. Explicitly calling `stop` after adding covers this edge case                                                         |
+| **Basename matching for files**                 | Internal torrent paths vary between uploads. Matching by filename (ignoring directory structure) means the diff works even when the packager rearranged folders                            |
+| **Blacklist, not whitelist**                    | It's easier to exclude known junk patterns (`.nfo`, `.txt`, `cover.jpg`) than to predict what valid files will be named. The blacklist is a simple substring match on the lowered filename |
 
 ---
 

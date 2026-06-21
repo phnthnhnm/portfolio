@@ -1,14 +1,14 @@
 ---
-title: "EVC GUI"
-description: "A cross-platform Flutter desktop app that wraps the Echo Value Calculator for Wuthering Waves. Native UI with dark/light themes, build comparison, and persistent echo preset management."
+title: 'EVC GUI'
+description: 'A cross-platform Flutter desktop app that wraps the Echo Value Calculator for Wuthering Waves. Native UI with dark/light themes, build comparison, and persistent echo preset management.'
 techStack:
-  - "Flutter"
-  - "Dart"
-  - "Provider"
-  - "Material Design 3"
-  - "REST API"
-  - "SharedPreferences"
-githubUrl: "https://github.com/phnthnhnm/evc"
+  - 'Flutter'
+  - 'Dart'
+  - 'Provider'
+  - 'Material Design 3'
+  - 'REST API'
+  - 'SharedPreferences'
+githubUrl: 'https://github.com/phnthnhnm/evc'
 featured: false
 order: 4
 ---
@@ -66,14 +66,14 @@ The stat mapping between the app's internal enum and the API's string keys is ce
 
 ## Design decisions
 
-| Decision | Why |
-|---|---|
-| **Provider over Riverpod/Bloc** | For two pieces of global state (theme + echo set), Provider is simpler and adds less boilerplate |
-| **HTML fallback parsing** | The Echo Value Calculator API occasionally returns HTML instead of JSON. Parsing the `<h2>` tags in `div.sub_anal_f` catches this edge case instead of showing an error |
-| **Image precaching** | All resonator portraits and stat icons are precached on startup via `Future.wait` so scrolling through the resonator grid is smooth with no placeholder flicker |
-| **SharedPreferences over SQLite** | Echo presets are small JSON blobs. No need for a full database. SharedPreferences keeps dependencies minimal |
-| **Material Design 3** | Native look on both Windows and Android, dark mode support out of the box, and `ColorScheme.fromSeed` auto-generates a cohesive palette from one color |
-| **Scoop + GitHub Releases** | Windows users can install via `scoop install evc` or download a prebuilt binary. I wrote a PowerShell script (`gh-release.ps1`) that automates GitHub Releases with the Flutter build output |
+| Decision                          | Why                                                                                                                                                                                          |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Provider over Riverpod/Bloc**   | For two pieces of global state (theme + echo set), Provider is simpler and adds less boilerplate                                                                                             |
+| **HTML fallback parsing**         | The Echo Value Calculator API occasionally returns HTML instead of JSON. Parsing the `<h2>` tags in `div.sub_anal_f` catches this edge case instead of showing an error                      |
+| **Image precaching**              | All resonator portraits and stat icons are precached on startup via `Future.wait` so scrolling through the resonator grid is smooth with no placeholder flicker                              |
+| **SharedPreferences over SQLite** | Echo presets are small JSON blobs. No need for a full database. SharedPreferences keeps dependencies minimal                                                                                 |
+| **Material Design 3**             | Native look on both Windows and Android, dark mode support out of the box, and `ColorScheme.fromSeed` auto-generates a cohesive palette from one color                                       |
+| **Scoop + GitHub Releases**       | Windows users can install via `scoop install evc` or download a prebuilt binary. I wrote a PowerShell script (`gh-release.ps1`) that automates GitHub Releases with the Flutter build output |
 
 ---
 

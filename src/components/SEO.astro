@@ -5,11 +5,11 @@ interface Props {
 }
 
 const {
-  title = "Phan Thành Nam — Backend Engineer",
-  description = "Backend engineer specializing in building scalable APIs, distributed systems, and cloud infrastructure. View my projects, experience, and get in touch.",
+  title = 'Phan Thành Nam — Backend Engineer',
+  description = 'Backend engineer specializing in building scalable APIs, distributed systems, and cloud infrastructure. View my projects, experience, and get in touch.',
 } = Astro.props;
 
-const site = Astro.site || "https://phanthanhnam.com";
+const site = Astro.site || 'https://phanthanhnam.com';
 ---
 
 <!-- Primary Meta -->
@@ -30,17 +30,17 @@ const site = Astro.site || "https://phanthanhnam.com";
 <meta name="twitter:description" content={description} />
 
 <!-- JSON-LD Structured Data -->
-<script type="application/ld+json" set:html={JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "Phan Thành Nam",
-  "url": site,
-  "jobTitle": "Backend Engineer",
-  "sameAs": [
-    "https://github.com/phnthnhnm",
-    "https://linkedin.com/in/phan-thanh-nam"
-  ]
-})} />
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Phan Thành Nam',
+    url: site,
+    jobTitle: 'Backend Engineer',
+    sameAs: ['https://github.com/phnthnhnm', 'https://linkedin.com/in/phan-thanh-nam'],
+  })}
+/>
 
 <!-- Favicon -->
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />

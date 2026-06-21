@@ -6,24 +6,24 @@ interface SkillCategory {
 
 const skillCategories: SkillCategory[] = [
   {
-    category: "Languages",
-    skills: ["C#", "Go", "Python", "TypeScript", "SQL", "JavaScript", "Java"],
+    category: 'Languages',
+    skills: ['C#', 'Go', 'Python', 'TypeScript', 'SQL', 'JavaScript', 'Java'],
   },
   {
-    category: "Frameworks",
-    skills: ["ASP.NET", "React", "Astro", "Express.js"],
+    category: 'Frameworks',
+    skills: ['ASP.NET', 'React', 'Astro', 'Express.js'],
   },
   {
-    category: "Databases",
-    skills: ["PostgreSQL", "SQL Server", "Redis"],
+    category: 'Databases',
+    skills: ['PostgreSQL', 'SQL Server', 'Redis'],
   },
   {
-    category: "Cloud & DevOps",
-    skills: ["Docker", "Kubernetes", "GitHub Actions", "AWS", "Azure", "NGINX"],
+    category: 'Cloud & DevOps',
+    skills: ['Docker', 'Kubernetes', 'GitHub Actions', 'AWS', 'Azure', 'NGINX'],
   },
   {
-    category: "Tools & Practices",
-    skills: ["Git", "RabbitMQ","REST", "GraphQL", "Agile/Scrum"],
+    category: 'Tools & Practices',
+    skills: ['Git', 'RabbitMQ', 'REST', 'GraphQL', 'Agile/Scrum'],
   },
 ];
 ---
@@ -34,18 +34,20 @@ const skillCategories: SkillCategory[] = [
   </h2>
 
   <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-    {skillCategories.map((cat) => (
-      <div class="card">
-        <h3 class="mb-4 flex items-center gap-2 text-lg font-semibold">
-          <span class="h-2 w-2 rounded-full bg-indigo-500"></span>
-          {cat.category}
-        </h3>
-        <div class="flex flex-wrap gap-2">
-          {cat.skills.map((skill) => (
-            <span class="badge">{skill}</span>
-          ))}
+    {
+      skillCategories.map((cat) => (
+        <div class="card">
+          <h3 class="mb-4 flex items-center gap-2 text-lg font-semibold">
+            <span class="h-2 w-2 rounded-full bg-indigo-500" />
+            {cat.category}
+          </h3>
+          <div class="flex flex-wrap gap-2">
+            {cat.skills.map((skill) => (
+              <span class="badge">{skill}</span>
+            ))}
+          </div>
         </div>
-      </div>
-    ))}
+      ))
+    }
   </div>
 </section>

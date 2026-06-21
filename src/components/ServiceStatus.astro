@@ -1,4 +1,5 @@
 ---
+
 ---
 
 <div id="service-status" class="section-container">
@@ -12,10 +13,18 @@
     class="card mb-6 flex items-center gap-3 border-l-4"
     data-status="checking"
   >
-    <div id="status-summary-icon" class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-800">
+    <div
+      id="status-summary-icon"
+      class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-800"
+    >
       <svg class="h-4 w-4 animate-spin text-slate-500" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
+        ></circle>
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
       </svg>
     </div>
     <div>
@@ -31,43 +40,50 @@
       id="status-refresh-btn"
       class="inline-flex items-center gap-2 rounded-lg border border-slate-700 px-4 py-2 text-sm font-medium text-slate-300 transition-colors hover:border-slate-500 hover:text-white"
     >
-      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
-        <path d="M21 3v5h-5" />
-        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
-        <path d="M8 16H3v5" />
+      <svg
+        class="h-4 w-4"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+        <path d="M21 3v5h-5"></path>
+        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+        <path d="M8 16H3v5"></path>
       </svg>
       Refresh
     </button>
   </div>
 
   <!-- Service cards -->
-  <div id="status-services" class="space-y-3">
-  </div>
+  <div id="status-services" class="space-y-3"></div>
 </div>
 
 <script is:inline>
   (() => {
     var SERVICES = [
       {
-        id: "contact",
-        name: "Contact API",
-        url: "/api/contact",
-        description: "Contact form endpoint — email delivery via Resend",
-        method: "HEAD",
+        id: 'contact',
+        name: 'Contact API',
+        url: '/api/contact',
+        description: 'Contact form endpoint — email delivery via Resend',
+        method: 'HEAD',
       },
       {
-        id: "counter",
-        name: "Visitor Counter",
-        url: "/api/counter",
-        description: "Page view counter backed by Cloudflare KV",
-        method: "GET",
+        id: 'counter',
+        name: 'Visitor Counter',
+        url: '/api/counter',
+        description: 'Page view counter backed by Cloudflare KV',
+        method: 'GET',
       },
       {
-        id: "resume",
-        name: "Resume",
-        url: "/api/health/resume",
-        description: "Public resume hosted on Reactive Resume",
+        id: 'resume',
+        name: 'Resume',
+        url: '/api/health/resume',
+        description: 'Public resume hosted on Reactive Resume',
         proxy: true,
       },
     ];
@@ -76,52 +92,54 @@
     var SLOW_THRESHOLD_MS = 1500;
     var REFRESH_INTERVAL_S = 60;
 
-    var container = document.getElementById("service-status");
+    var container = document.getElementById('service-status');
     if (!container) return;
 
-    var summaryEl = document.getElementById("status-summary");
-    var summaryIconEl = document.getElementById("status-summary-icon");
-    var summaryTextEl = document.getElementById("status-summary-text");
-    var summaryDetailEl = document.getElementById("status-summary-detail");
-    var lastCheckedEl = document.getElementById("status-last-checked");
-    var refreshBtn = document.getElementById("status-refresh-btn");
-    var servicesEl = document.getElementById("status-services");
+    var summaryEl = document.getElementById('status-summary');
+    var summaryIconEl = document.getElementById('status-summary-icon');
+    var summaryTextEl = document.getElementById('status-summary-text');
+    var summaryDetailEl = document.getElementById('status-summary-detail');
+    var lastCheckedEl = document.getElementById('status-last-checked');
+    var refreshBtn = document.getElementById('status-refresh-btn');
+    var servicesEl = document.getElementById('status-services');
 
     function statusIcon(status) {
       switch (status) {
-        case "up":
+        case 'up':
           return '<svg class="h-5 w-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335" /><path d="m9 11 3 3L22 4" /></svg>';
-        case "slow":
+        case 'slow':
           return '<svg class="h-5 w-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>';
-        case "down":
+        case 'down':
           return '<svg class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>';
-        case "checking":
+        case 'checking':
           return '<svg class="h-4 w-4 animate-spin text-slate-500" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
       }
     }
 
     function latencyText(latency) {
-      if (latency === null) return "--";
-      if (latency < 1000) return Math.round(latency) + "ms";
-      return (latency / 1000).toFixed(1) + "s";
+      if (latency === null) return '--';
+      if (latency < 1000) return Math.round(latency) + 'ms';
+      return (latency / 1000).toFixed(1) + 's';
     }
 
     function latencyColor(latency) {
-      if (latency === null) return "text-red-400";
-      return latency > SLOW_THRESHOLD_MS ? "text-amber-400" : "text-emerald-400";
+      if (latency === null) return 'text-red-400';
+      return latency > SLOW_THRESHOLD_MS ? 'text-amber-400' : 'text-emerald-400';
     }
 
     async function checkService(svc) {
       var controller = new AbortController();
-      var timeout = setTimeout(function () { controller.abort(); }, TIMEOUT_MS);
+      var timeout = setTimeout(function () {
+        controller.abort();
+      }, TIMEOUT_MS);
 
       var start = performance.now();
       try {
         var init = { signal: controller.signal };
-        if (svc.cors === "no-cors") {
-          init.mode = "no-cors";
+        if (svc.cors === 'no-cors') {
+          init.mode = 'no-cors';
         } else {
-          init.method = svc.method || "GET";
+          init.method = svc.method || 'GET';
         }
         var response = await fetch(svc.url, init);
         var latency = performance.now() - start;
@@ -143,102 +161,131 @@
           id: svc.id,
           name: svc.name,
           url: svc.url,
-          status: latency > SLOW_THRESHOLD_MS ? "slow" : "up",
+          status: latency > SLOW_THRESHOLD_MS ? 'slow' : 'up',
           latency: latency,
         };
       } catch (err) {
         clearTimeout(timeout);
-        var isTimeout = err instanceof DOMException && err.name === "AbortError";
+        var isTimeout = err instanceof DOMException && err.name === 'AbortError';
         return {
           id: svc.id,
           name: svc.name,
           url: svc.url,
-          status: "down",
+          status: 'down',
           latency: null,
-          error: isTimeout ? "Request timed out" : err instanceof Error ? err.message : String(err),
+          error: isTimeout ? 'Request timed out' : err instanceof Error ? err.message : String(err),
         };
       }
     }
 
     // Pre-compute descriptions lookup
     var descriptions = {};
-    SERVICES.forEach(function (s) { descriptions[s.id] = s.description; });
+    SERVICES.forEach(function (s) {
+      descriptions[s.id] = s.description;
+    });
 
     function renderChecking() {
       servicesEl.innerHTML = SERVICES.map(function (s) {
         return (
           '<div class="card flex items-start gap-4 opacity-60">' +
           '<div class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center">' +
-          statusIcon("checking") +
-          "</div>" +
+          statusIcon('checking') +
+          '</div>' +
           '<div class="min-w-0 flex-1">' +
           '<div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">' +
-          '<h3 class="font-medium text-slate-200">' + s.name + "</h3>" +
+          '<h3 class="font-medium text-slate-200">' +
+          s.name +
+          '</h3>' +
           '<div class="flex items-center gap-3">' +
-          '<code class="text-xs text-slate-500">' + s.url + "</code>" +
+          '<code class="text-xs text-slate-500">' +
+          s.url +
+          '</code>' +
           '<span class="text-xs tabular-nums text-slate-500">--</span>' +
-          "</div>" +
-          "</div>" +
-          '<p class="text-sm text-slate-500">' + (descriptions[s.id] || "") + "</p>" +
-          "</div>" +
-          "</div>"
+          '</div>' +
+          '</div>' +
+          '<p class="text-sm text-slate-500">' +
+          (descriptions[s.id] || '') +
+          '</p>' +
+          '</div>' +
+          '</div>'
         );
-      }).join("");
+      }).join('');
     }
 
     function renderResults(results) {
-      servicesEl.innerHTML = results.map(function (r) {
-        return (
-          '<div class="card flex items-start gap-4">' +
-          '<div class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center">' +
-          statusIcon(r.status) +
-          "</div>" +
-          '<div class="min-w-0 flex-1">' +
-          '<div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">' +
-          '<h3 class="font-medium text-slate-200">' + r.name + "</h3>" +
-          '<div class="flex items-center gap-3">' +
-          '<code class="text-xs text-slate-500">' + r.url + "</code>" +
-          '<span class="text-xs tabular-nums ' + latencyColor(r.latency) + '">' + latencyText(r.latency) + "</span>" +
-          "</div>" +
-          "</div>" +
-          '<p class="text-sm text-slate-500">' + (r.error ? '<span class="text-red-400">' + r.error + "</span>" : descriptions[r.id] || "") + "</p>" +
-          "</div>" +
-          "</div>"
-        );
-      }).join("");
+      servicesEl.innerHTML = results
+        .map(function (r) {
+          return (
+            '<div class="card flex items-start gap-4">' +
+            '<div class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center">' +
+            statusIcon(r.status) +
+            '</div>' +
+            '<div class="min-w-0 flex-1">' +
+            '<div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">' +
+            '<h3 class="font-medium text-slate-200">' +
+            r.name +
+            '</h3>' +
+            '<div class="flex items-center gap-3">' +
+            '<code class="text-xs text-slate-500">' +
+            r.url +
+            '</code>' +
+            '<span class="text-xs tabular-nums ' +
+            latencyColor(r.latency) +
+            '">' +
+            latencyText(r.latency) +
+            '</span>' +
+            '</div>' +
+            '</div>' +
+            '<p class="text-sm text-slate-500">' +
+            (r.error
+              ? '<span class="text-red-400">' + r.error + '</span>'
+              : descriptions[r.id] || '') +
+            '</p>' +
+            '</div>' +
+            '</div>'
+          );
+        })
+        .join('');
 
-      var down = results.filter(function (r) { return r.status === "down"; }).length;
-      var slow = results.filter(function (r) { return r.status === "slow"; }).length;
+      var down = results.filter(function (r) {
+        return r.status === 'down';
+      }).length;
+      var slow = results.filter(function (r) {
+        return r.status === 'slow';
+      }).length;
 
       var status, icon, text, detail;
 
       if (down > 0) {
-        status = "down";
-        icon = statusIcon("down");
-        text = down + " service" + (down > 1 ? "s" : "") + " down";
+        status = 'down';
+        icon = statusIcon('down');
+        text = down + ' service' + (down > 1 ? 's' : '') + ' down';
         var parts = [];
-        if (down) parts.push(down + " unreachable");
-        if (slow) parts.push(slow + " degraded");
-        detail = parts.join(", ");
+        if (down) parts.push(down + ' unreachable');
+        if (slow) parts.push(slow + ' degraded');
+        detail = parts.join(', ');
       } else if (slow > 0) {
-        status = "slow";
-        icon = statusIcon("slow");
-        text = slow + " service" + (slow > 1 ? "s" : "") + " degraded";
-        detail = "Elevated response times";
+        status = 'slow';
+        icon = statusIcon('slow');
+        text = slow + ' service' + (slow > 1 ? 's' : '') + ' degraded';
+        detail = 'Elevated response times';
       } else {
-        status = "up";
-        icon = statusIcon("up");
-        text = "All systems operational";
-        detail = "Everything is running smoothly";
+        status = 'up';
+        icon = statusIcon('up');
+        text = 'All systems operational';
+        detail = 'Everything is running smoothly';
       }
 
       // Swap border-l color
       summaryEl.dataset.status = status;
-      summaryEl.className = summaryEl.className.replace(/border-l-(slate|red|amber|emerald)-\d+/, "");
+      summaryEl.className = summaryEl.className.replace(
+        /border-l-(slate|red|amber|emerald)-\d+/,
+        '',
+      );
       var borderColor = {
-        up: "border-l-emerald-500",
-        slow: "border-l-amber-500",
-        down: "border-l-red-500",
+        up: 'border-l-emerald-500',
+        slow: 'border-l-amber-500',
+        down: 'border-l-red-500',
       }[status];
       if (borderColor) summaryEl.classList.add(borderColor);
 
@@ -255,15 +302,20 @@
     var originalBtnHtml = refreshBtn.innerHTML;
 
     function updateTimestamp() {
-      lastCheckedEl.textContent = "Last checked: " + new Date().toLocaleTimeString() + "  ·  Auto-refreshes every " + REFRESH_INTERVAL_S + "s";
+      lastCheckedEl.textContent =
+        'Last checked: ' +
+        new Date().toLocaleTimeString() +
+        '  ·  Auto-refreshes every ' +
+        REFRESH_INTERVAL_S +
+        's';
     }
 
     function setButtonDisabled(disabled) {
       refreshBtn.disabled = disabled;
       if (disabled) {
-        refreshBtn.classList.add("opacity-50", "cursor-not-allowed");
+        refreshBtn.classList.add('opacity-50', 'cursor-not-allowed');
       } else {
-        refreshBtn.classList.remove("opacity-50", "cursor-not-allowed");
+        refreshBtn.classList.remove('opacity-50', 'cursor-not-allowed');
       }
     }
 
@@ -306,7 +358,7 @@
       autoInterval = setInterval(checkAll, REFRESH_INTERVAL_S * 1000);
     }
 
-    refreshBtn.addEventListener("click", function () {
+    refreshBtn.addEventListener('click', function () {
       checkAll();
       resetInterval();
     });

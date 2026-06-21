@@ -1,5 +1,5 @@
 ---
-import { getGitLastModified } from "@utils/git";
+import { getGitLastModified } from '@utils/git';
 
 interface Props {
   filePath: string;
@@ -7,15 +7,15 @@ interface Props {
   branch?: string;
 }
 
-const { filePath, repo = "phnthnhnm/portfolio", branch = "main" } = Astro.props;
+const { filePath, repo = 'phnthnhnm/portfolio', branch = 'main' } = Astro.props;
 
 const lastModified = getGitLastModified(filePath);
 if (!lastModified) return;
 
-const dateFormatted = new Date(lastModified).toLocaleDateString("en-US", {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
+const dateFormatted = new Date(lastModified).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
 });
 const githubUrl = `https://github.com/${repo}/blob/${branch}/${filePath}`;
 ---
@@ -27,9 +27,17 @@ const githubUrl = `https://github.com/${repo}/blob/${branch}/${filePath}`;
   class="inline-flex items-center gap-1.5 text-xs text-slate-500 transition-colors hover:text-indigo-400"
   title={`View source: ${filePath}`}
 >
-  <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="12" cy="12" r="10" />
-    <polyline points="12 6 12 12 16 14" />
+  <svg
+    class="h-3.5 w-3.5"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke-width="1.5"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <circle cx="12" cy="12" r="10"></circle>
+    <polyline points="12 6 12 12 16 14"></polyline>
   </svg>
   Last updated {dateFormatted}
 </a>
