@@ -26,9 +26,20 @@ export default tseslint.config(
 
   // Node.js scripts
   {
-    files: ['scripts/**', 'functions/**'],
+    files: ['scripts/**'],
     languageOptions: {
       globals: globals.node,
+    },
+  },
+
+  // Cloudflare Functions (server-side — console is the logger)
+  {
+    files: ['functions/**'],
+    languageOptions: {
+      globals: globals.node,
+    },
+    rules: {
+      'no-console': 'off',
     },
   },
 
