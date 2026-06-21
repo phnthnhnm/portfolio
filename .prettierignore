@@ -1,0 +1,11 @@
+dist
+node_modules
+.astro
+.wrangler
+.lighthouseci
+.pnpm-store
+pnpm-lock.yaml
+.dev.vars
+.dev.vars.*
+.env
+.env.*

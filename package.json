@@ -6,12 +6,15 @@
     "dev": "astro dev",
     "dev:full": "astro build && wrangler pages dev dist",
     "build": "astro build",
-    "build:ci": "pnpm test && pnpm build",
+    "build:ci": "pnpm format:check && pnpm test && pnpm build",
     "preview": "astro preview",
     "test": "vitest run",
     "test:watch": "vitest",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "lighthouse": "astro build && node scripts/lighthouse.mjs",
-    "lighthouse:ci": "astro build && node scripts/lighthouse.mjs --ci"
+    "lighthouse:ci": "astro build && node scripts/lighthouse.mjs --ci",
+    "prepare": "husky"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.2.0",
@@ -28,6 +31,11 @@
     "@tailwindcss/vite": "^4.3.1",
     "@types/mdast": "^4.0.4",
     "@types/node": "^26.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.7",
+    "prettier": "^3.8.4",
+    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-tailwindcss": "^0.8.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.9",
     "wrangler": "^4.103.0"
