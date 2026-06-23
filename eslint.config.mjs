@@ -7,7 +7,13 @@ import globals from 'globals';
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', '.astro/**', 'public/mermaid-viewer.js', 'lighthouserc.cjs'],
+    ignores: [
+      'dist/**',
+      '.astro/**',
+      '.wrangler/**',
+      'public/mermaid-viewer.js',
+      'lighthouserc.cjs',
+    ],
   },
 
   js.configs.recommended,

@@ -1,13 +1,14 @@
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'astro/config';
-import { unified } from '@astrojs/markdown-remark';
-import { remarkMermaid } from './src/utils/remark-mermaid';
+import { satteri } from '@astrojs/markdown-satteri';
+import { satteriMermaid } from './src/utils/satteri-mermaid';
 
 export default defineConfig({
   site: 'https://phanthanhnam.com',
+  compressHTML: true,
   markdown: {
-    processor: unified({
-      remarkPlugins: [remarkMermaid],
+    processor: satteri({
+      mdastPlugins: [satteriMermaid()],
     }),
   },
   vite: {
