@@ -1,11 +1,11 @@
 ---
 title: 'Portfolio Website'
-description: 'This website — a static portfolio built with Astro, Tailwind CSS, and Preact. Features zoomable Mermaid diagrams and a floating table of contents, all deployed on Cloudflare Pages.'
+description: 'This website — a static portfolio built with Astro 7 and Tailwind CSS v4. Features zoomable Mermaid diagrams, a custom Sätteri MDAST plugin, and a floating table of contents, all deployed on Cloudflare Pages.'
 techStack:
   - 'Astro'
   - 'Tailwind CSS v4'
   - 'TypeScript'
-  - 'Preact'
+  - 'Sätteri'
   - 'Cloudflare Pages'
   - 'Mermaid'
 githubUrl: 'https://github.com/phnthnhnm/portfolio'
@@ -15,7 +15,7 @@ order: 2
 
 You're looking at it. I built this site from scratch to pair with my resume. The goal was a fast, single-page portfolio that doesn't look like a template and has a few touches that make it feel alive.
 
-I went with Astro because it ships zero JavaScript by default. Every component on this page is static HTML and CSS unless I explicitly mark it as an interactive island. The Mermaid diagram viewer inlines its SVG at build time and only pulls Mermaid from CDN when a diagram is actually on the page.
+I went with Astro because it ships zero JavaScript by default. Every component on this page is static HTML and CSS — all interactive bits use `is:inline` scripts that stay out of the bundler. The Mermaid diagram viewer inlines its SVG at build time and only pulls Mermaid from CDN when a diagram is actually on the page.
 
 ---
 
@@ -25,9 +25,10 @@ I went with Astro because it ships zero JavaScript by default. Every component o
 
 The site is mostly static. Astro builds everything to flat HTML, CSS, and JS at deploy time. Two Cloudflare Pages Functions handle the contact form (sends email via Resend) and the visitor counter (increments a KV namespace). That's the only backend — no database, no framework server.
 
-- **Astro 6** handles routing, content collections, and the build pipeline. Project detail pages use `getStaticPaths` so each project gets its own URL without client-side routing.
+- **Astro 7** handles routing, content collections, and the build pipeline. Project detail pages use `getStaticPaths` so each project gets its own URL without client-side routing. The site upgraded from v6 to v7 during a recent migration — the Rust compiler, Vite 8, and native Sätteri Markdown processor are all in use.
 - **Tailwind CSS v4** with the Typography plugin handles all styling. The dark theme uses CSS custom properties in a `@theme` block — there's no `tailwind.config.js`.
-- **TypeScript** for the Astro config, content schemas, and validation logic.
+- **TypeScript** for the Astro config, content schemas, and validation logic. Zod schemas power content collection validation, with `z` imported from `astro/zod` (the v7 convention).
+- **Sätteri** is the native Markdown processor in Astro 7. I wrote a custom MDAST plugin that intercepts ` ```mermaid ` code blocks and replaces them with raw `<pre class="mermaid">` elements before Shiki touches them. The plugin uses Sätteri's named-visitor API — the `code` visitor checks `node.lang` and returns `{ rawHtml }` for mermaid blocks.
 - **Cloudflare Pages** handles deployment, the contact API (`functions/api/contact.ts`), and the counter API (`functions/api/counter.ts`). I connected the GitHub repo and Cloudflare auto-detects Astro, runs `pnpm build`, and deploys the `dist/` folder.
 - **Resend** sends contact form emails. The API key lives in a Cloudflare secret, not in the repo.
 - **Turnstile** sits on the contact form to keep bots out. The siteverify runs on a separate Cloudflare Worker.
@@ -66,8 +67,9 @@ portfolio/
 │   │   └── contact-validation.ts     # Zod schema for contact form input
 │   ├── styles/global.css             # Tailwind directives + custom theme
 │   └── utils/
-│       ├── remark-mermaid.ts         # Custom remark plugin for Mermaid blocks
+│       ├── satteri-mermaid.ts        # Sätteri MDAST plugin for Mermaid blocks
 │       └── git.ts                    # Git last-modified helper
+│       └── reading-time.ts           # Reading time estimator
 ├── functions/api/
 │   ├── contact.ts                    # Pages Function: validates + sends email via Resend
 │   └── counter.ts                    # Pages Function: increments KV view counter
@@ -92,6 +94,10 @@ Each project on the homepage is a Markdown file in `src/content/projects/`. Astr
 
 ```typescript
 // src/content.config.ts
+import { defineCollection } from 'astro:content';
+import { z } from 'astro/zod';
+import { glob } from 'astro/loaders';
+
 const projects = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
   schema: z.object({
@@ -107,7 +113,7 @@ const projects = defineCollection({
 });
 ```
 
-Astro 6's content layer uses a `loader` pattern instead of the old `src/content/config.ts` approach — you point `glob()` at a directory and it pulls in every matching file. The detail pages still use `getStaticPaths` to generate one HTML file per project at build time.
+Astro 7 imports `z` from `astro/zod` instead of `astro:content`. The content layer uses a `loader` pattern — `glob()` pulls in every matching file from a directory. The detail pages use `getStaticPaths` to generate one HTML file per project at build time.
 
 ### Contact form with Turnstile and Resend
 
@@ -121,7 +127,9 @@ The Resend API key is stored as a Cloudflare secret, not in version control. Loc
 
 ### Mermaid diagrams with zoom and pan
 
-I wrote a custom remark plugin that intercepts ` ```mermaid ` code blocks in Markdown and converts them to raw `<pre class="mermaid">` elements, bypassing Astro's built-in Shiki syntax highlighter.
+I wrote a custom Sätteri MDAST plugin that intercepts ` ```mermaid ` code blocks in Markdown and replaces them with raw `<pre class="mermaid">` elements before the Shiki highlighter runs. Sätteri's plugin API uses named visitor functions — the `code` visitor checks `node.lang === 'mermaid'` and returns `{ rawHtml: '...' }` to swap the node.
+
+In v6 this was a remark plugin using `unist-util-visit`. The v7 migration replaced it with a native Sätteri plugin, which meant dropping `@astrojs/markdown-remark`, `unist-util-visit`, and `@types/mdast` — Sätteri is built into Astro 7.
 
 On the client side, `mermaid-viewer.js` loads Mermaid 11 from CDN via dynamic import, initializes it with a dark theme matching the site's palette, and renders every `.mermaid` element as an SVG. After rendering, it wraps each diagram in a zoomable container with scroll-to-zoom, click-to-drag panning, and a double-click fullscreen overlay with independent zoom controls.
 
@@ -137,16 +145,16 @@ Three large gradient orbs drift slowly behind all sections using CSS `@keyframes
 
 ## Design decisions
 
-| Decision                                                      | Reasoning                                                                                                                                                                                                                                   |
-| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Astro over Next.js or pure React**                          | This site has one interactive widget. Shipping a full SPA framework for 99% static content made no sense. Astro's island model means I only pay for the JS I actually need                                                                  |
-| **Tailwind v4 over CSS modules**                              | v4's CSS-first config (`@theme` blocks, `@plugin` directives) eliminated `tailwind.config.js` entirely. Utility classes colocate styles with markup                                                                                         |
-| **Content Collections over a CMS**                            | No database, no admin panel, no API. Markdown in the repo means version control, easy editing, and zero hosting cost                                                                                                                        |
-| **Cloudflare Pages over Vercel/Netlify**                      | I was already using Cloudflare for DNS. Pages has the same free tier, auto-deploys from GitHub, and the Functions + KV combo handles the few dynamic bits (contact form, counter) without a separate backend                                |
-| **Resend over SendGrid/Mailgun**                              | Cleaner API, simpler DX, and the free tier covers portfolio contact volume easily                                                                                                                                                           |
-| **Custom remark plugin over an existing Mermaid integration** | Existing Astro Mermaid integrations either didn't support v11, required build-time rendering (heavy), or used outdated CDN URLs. A 20-line remark plugin and a separate client script gave me exact control over when and how Mermaid loads |
-| **Cloudflare Functions over a separate backend**              | The contact form and counter are the only dynamic needs. Two 30-line Functions with KV is simpler than spinning up a separate service                                                                                                       |
-| **Turnstile over reCAPTCHA**                                  | Less invasive UX (no image grid challenges), no Google dependency, and native Cloudflare integration                                                                                                                                        |
+| Decision                                              | Reasoning                                                                                                                                                                                                                                                                                                                                    |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Astro over Next.js or pure React**                  | This site has one interactive widget. Shipping a full SPA framework for 99% static content made no sense. Astro ships zero JS by default, and `is:inline` scripts handle the few interactive bits without a framework                                                                                                                        |
+| **Tailwind v4 over CSS modules**                      | v4's CSS-first config (`@theme` blocks, `@plugin` directives) eliminated `tailwind.config.js` entirely. Utility classes colocate styles with markup                                                                                                                                                                                          |
+| **Content Collections over a CMS**                    | No database, no admin panel, no API. Markdown in the repo means version control, easy editing, and zero hosting cost                                                                                                                                                                                                                         |
+| **Cloudflare Pages over Vercel/Netlify**              | I was already using Cloudflare for DNS. Pages has the same free tier, auto-deploys from GitHub, and the Functions + KV combo handles the few dynamic bits (contact form, counter) without a separate backend                                                                                                                                 |
+| **Resend over SendGrid/Mailgun**                      | Cleaner API, simpler DX, and the free tier covers portfolio contact volume easily                                                                                                                                                                                                                                                            |
+| **Custom Sätteri plugin over a prebuilt integration** | Existing Astro Mermaid integrations either didn't support v11, required build-time rendering (heavy), or used outdated CDN URLs. A 10-line Sätteri MDAST plugin and a separate client script gave me exact control over when and how Mermaid loads. Porting it from remark to Sätteri during the v7 migration let me drop three dependencies |
+| **Cloudflare Functions over a separate backend**      | The contact form and counter are the only dynamic needs. Two 30-line Functions with KV is simpler than spinning up a separate service                                                                                                                                                                                                        |
+| **Turnstile over reCAPTCHA**                          | Less invasive UX (no image grid challenges), no Google dependency, and native Cloudflare integration                                                                                                                                                                                                                                         |
 
 ---
 
